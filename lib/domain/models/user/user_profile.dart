@@ -6,14 +6,14 @@ part 'user_profile.g.dart';
 class UserProfile {
   final String id;
   final String name;
-  final String avatarLink;
+  final String? avatarLink;
   final String email;
   final String birthDate;
 
   UserProfile({
     required this.id,
     required this.name,
-    required this.avatarLink,
+    this.avatarLink,
     required this.email,
     required this.birthDate,
   });

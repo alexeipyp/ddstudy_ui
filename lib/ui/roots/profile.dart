@@ -85,7 +85,9 @@ class Profile extends StatelessWidget {
                   width: 6,
                 ),
                 shape: BoxShape.circle,
-                image: (viewModel.user != null && viewModel.headers != null)
+                image: (viewModel.user != null &&
+                        viewModel.headers != null &&
+                        viewModel.user!.avatarLink != null)
                     ? DecorationImage(
                         image: NetworkImage(
                             "$baseUrl${viewModel.user!.avatarLink}",
