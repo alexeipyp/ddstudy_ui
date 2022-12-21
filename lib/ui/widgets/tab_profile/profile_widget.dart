@@ -1,103 +1,52 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:ddstudy_ui/data/services/api_service.dart';
+import 'package:ddstudy_ui/internal/config/app_config.dart';
+import 'package:ddstudy_ui/ui/widgets/tab_profile/profile_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/services/auth_service.dart';
-import '../../domain/models/user/user_activity.dart';
-import '../../domain/models/user/user_profile.dart';
-import '../../internal/config/app_config.dart';
-import '../../internal/config/shared_prefs.dart';
-import '../../internal/config/token_storage.dart';
-import '../app_navigator.dart';
-
-class _ViewModel extends ChangeNotifier {
-  BuildContext context;
-  final _authService = AuthService();
-  final _apiService = ApiService();
-  _ViewModel({required this.context}) {
-    asyncInit();
-  }
-
-  UserProfile? _user;
-  UserProfile? get user => _user;
-  set user(UserProfile? val) {
-    _user = val;
-    notifyListeners();
-  }
-
-  UserActivity? _userActivity;
-  UserActivity? get userActivity => _userActivity;
-  set userActivity(UserActivity? val) {
-    _userActivity = val;
-    notifyListeners();
-  }
-
-  Map<String, String>? headers;
-
-  void asyncInit() async {
-    var token = await TokenStorage.getAccessToken();
-    headers = {"Authorization": "Bearer $token"};
-    user = await SharedPrefs.getStoredUser();
-    userActivity = await _apiService.getUserActivity();
-  }
-
-  void _logout() async {
-    await _authService.logout().then((value) => AppNavigator.toLoader());
-  }
-
-  Future _refresh() async {
-    return _authService.tryGetUser();
-  }
-}
-
-class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
+class ProfileWidget extends StatelessWidget {
+  const ProfileWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var viewModel = context.watch<_ViewModel>();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Fluttergram.NET"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: viewModel._refresh,
-          ),
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: viewModel._logout,
-          ),
-        ],
-      ),
-      body: Column(
+    var dtf = DateFormat("dd.MM.yyyy");
+    var viewModel = context.watch<ProfileViewModel>();
+    return SafeArea(
+      child: Column(
         children: [
           // Avatar Image
           Flexible(
-            flex: 8,
-            child: Container(
-              margin: const EdgeInsets.all(10),
-              constraints: const BoxConstraints.expand(),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Theme.of(context).primaryColor,
-                  width: 6,
+              flex: 8,
+              child: GestureDetector(
+                onTap: viewModel.changePhoto,
+                child: Container(
+                  margin: const EdgeInsets.all(10),
+                  constraints: const BoxConstraints.expand(),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 6,
+                    ),
+                    shape: BoxShape.circle,
+                    image: (viewModel.user != null &&
+                            viewModel.headers != null &&
+                            viewModel.user!.avatarLink != null)
+                        ? DecorationImage(
+                            image: (viewModel.imagePath != null
+                                    ? FileImage(File(viewModel.imagePath!))
+                                    : NetworkImage(
+                                        "$baseUrl${viewModel.user!.avatarLink}",
+                                        headers: viewModel.headers))
+                                as ImageProvider,
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
                 ),
-                shape: BoxShape.circle,
-                image: (viewModel.user != null &&
-                        viewModel.headers != null &&
-                        viewModel.user!.avatarLink != null)
-                    ? DecorationImage(
-                        image: NetworkImage(
-                            "$baseUrl${viewModel.user!.avatarLink}",
-                            headers: viewModel.headers),
-                        fit: BoxFit.fitHeight,
-                      )
-                    : null,
-              ),
-            ),
-          ),
+              )),
           // Full Name
           Flexible(
             flex: 2,
@@ -118,9 +67,7 @@ class Profile extends StatelessWidget {
                 ),
                 _TextContainer(
                   textString:
-                      "Birth at: ${viewModel.user == null ? "-" : "${viewModel.user!.getParsedBirthDate().day}."
-                          "${viewModel.user!.getParsedBirthDate().month}."
-                          "${viewModel.user!.getParsedBirthDate().year}"}",
+                      "Birth at: ${viewModel.user == null ? "-" : dtf.format(viewModel.user!.birthDate)}",
                 ),
               ],
             ),
@@ -151,8 +98,8 @@ class Profile extends StatelessWidget {
 
   static create() {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => _ViewModel(context: context),
-      child: const Profile(),
+      create: (BuildContext context) => ProfileViewModel(context: context),
+      child: const ProfileWidget(),
     );
   }
 }

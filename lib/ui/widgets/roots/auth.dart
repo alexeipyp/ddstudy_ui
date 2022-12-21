@@ -1,27 +1,27 @@
 import 'package:ddstudy_ui/data/services/auth_service.dart';
-import 'package:ddstudy_ui/ui/app_navigator.dart';
+import 'package:ddstudy_ui/ui/navigation/global_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class _ViewModelState {
+class AuthViewModelState {
   final String? login;
   final String? password;
   final bool isLoading;
   final String? errorText;
-  const _ViewModelState({
+  const AuthViewModelState({
     this.login,
     this.password,
     this.isLoading = false,
     this.errorText,
   });
 
-  _ViewModelState copyWith({
+  AuthViewModelState copyWith({
     String? login,
     String? password,
     bool? isLoading,
     String? errorText,
   }) {
-    return _ViewModelState(
+    return AuthViewModelState(
       login: login ?? this.login,
       password: password ?? this.password,
       isLoading: isLoading ?? this.isLoading,
@@ -30,13 +30,13 @@ class _ViewModelState {
   }
 }
 
-class _ViewModel extends ChangeNotifier {
+class AuthViewModel extends ChangeNotifier {
   var loginTec = TextEditingController();
   var passwTec = TextEditingController();
   final _authService = AuthService();
 
   BuildContext context;
-  _ViewModel({required this.context}) {
+  AuthViewModel({required this.context}) {
     loginTec.addListener(() {
       state = state.copyWith(login: loginTec.text);
     });
@@ -45,14 +45,14 @@ class _ViewModel extends ChangeNotifier {
     });
   }
 
-  var _state = const _ViewModelState();
+  var _state = const AuthViewModelState();
 
-  set state(_ViewModelState val) {
+  set state(AuthViewModelState val) {
     _state = val;
     notifyListeners();
   }
 
-  _ViewModelState get state => _state;
+  AuthViewModelState get state => _state;
 
   bool checkFields() {
     return (state.login?.isNotEmpty ?? false) &&
@@ -67,7 +67,7 @@ class _ViewModel extends ChangeNotifier {
     try {
       await _authService
           .auth(state.login, state.password)
-          .then((value) => AppNavigator.toLoader());
+          .then((value) => GlobalNavigator.toLoader());
     } on NoNetworkException {
       state = state.copyWith(errorText: "нет сети");
     } on WrongCredentialsException {
@@ -77,6 +77,10 @@ class _ViewModel extends ChangeNotifier {
     }
     state = state.copyWith(isLoading: false);
   }
+
+  void _toRegistration() {
+    GlobalNavigator.toRegistration();
+  }
 }
 
 class Auth extends StatelessWidget {
@@ -84,14 +88,17 @@ class Auth extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var viewModel = context.watch<_ViewModel>();
+    var viewModel = context.watch<AuthViewModel>();
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Fluttergram.NET"),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Center(
-            child: Container(
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -113,6 +120,14 @@ class Auth extends StatelessWidget {
                     const CircularProgressIndicator()
                   else if (viewModel.state.errorText != null)
                     Text(viewModel.state.errorText!),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 14),
+                      padding: const EdgeInsets.all(20.0),
+                    ),
+                    onPressed: viewModel._toRegistration,
+                    child: const Text('New to Fluttergram.NET? Create Profile'),
+                  ),
                 ],
               ),
             ),
@@ -122,8 +137,8 @@ class Auth extends StatelessWidget {
     );
   }
 
-  static Widget create() => ChangeNotifierProvider<_ViewModel>(
-        create: (context) => _ViewModel(context: context),
+  static Widget create() => ChangeNotifierProvider<AuthViewModel>(
+        create: (context) => AuthViewModel(context: context),
         child: const Auth(),
       );
 }

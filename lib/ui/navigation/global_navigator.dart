@@ -1,17 +1,18 @@
-import 'package:ddstudy_ui/ui/roots/app.dart';
-import 'package:ddstudy_ui/ui/roots/auth.dart';
-import 'package:ddstudy_ui/ui/roots/loader.dart';
-import 'package:ddstudy_ui/ui/roots/profile.dart';
+import 'package:ddstudy_ui/ui/widgets/roots/app.dart';
+import 'package:ddstudy_ui/ui/widgets/roots/auth.dart';
+import 'package:ddstudy_ui/ui/widgets/roots/loader.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/tab_register/register_widget.dart';
 
 class NavigationRoutes {
   static const loader = "/";
   static const auth = "/auth";
   static const app = "/app";
-  static const profile = "/app/profile";
+  static const register = "/auth/register";
 }
 
-class AppNavigator {
+class GlobalNavigator {
   static final key = GlobalKey<NavigatorState>();
 
   static void toLoader() async {
@@ -35,9 +36,9 @@ class AppNavigator {
     );
   }
 
-  static void toProfile() {
+  static void toRegistration() {
     key.currentState?.pushNamed(
-      NavigationRoutes.profile,
+      NavigationRoutes.register,
     );
   }
 
@@ -49,16 +50,19 @@ class AppNavigator {
     switch (settings.name) {
       case NavigationRoutes.loader:
         return PageRouteBuilder(
-            pageBuilder: ((_, __, ___) => LoaderWidget.create()));
+          pageBuilder: ((_, __, ___) => LoaderWidget.create()),
+        );
       case NavigationRoutes.auth:
-        return PageRouteBuilder(pageBuilder: ((_, __, ___) => Auth.create()));
+        return PageRouteBuilder(
+          pageBuilder: ((_, __, ___) => Auth.create()),
+        );
       case NavigationRoutes.app:
         return PageRouteBuilder(
           pageBuilder: ((_, __, ___) => App.create()),
         );
-      case NavigationRoutes.profile:
+      case NavigationRoutes.register:
         return PageRouteBuilder(
-          pageBuilder: ((_, __, ___) => Profile.create()),
+          pageBuilder: ((_, __, ___) => RegisterWidget.create()),
         );
     }
     return null;

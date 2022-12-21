@@ -1,24 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_profile.dart';
+part of 'register_user_request.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserProfile _$UserProfileFromJson(Map<String, dynamic> json) => UserProfile(
-      id: json['id'] as String,
+RegisterUserRequest _$RegisterUserRequestFromJson(Map<String, dynamic> json) =>
+    RegisterUserRequest(
       name: json['name'] as String,
-      avatarLink: json['avatarLink'] as String?,
       email: json['email'] as String,
+      password: json['password'] as String,
+      retryPassword: json['retryPassword'] as String,
       birthDate: json['birthDate'] as String,
     );
 
-Map<String, dynamic> _$UserProfileToJson(UserProfile instance) =>
+Map<String, dynamic> _$RegisterUserRequestToJson(
+        RegisterUserRequest instance) =>
     <String, dynamic>{
-      'id': instance.id,
       'name': instance.name,
-      'avatarLink': instance.avatarLink,
       'email': instance.email,
+      'password': instance.password,
+      'retryPassword': instance.retryPassword,
       'birthDate': instance.birthDate,
     };

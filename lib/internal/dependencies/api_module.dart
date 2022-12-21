@@ -5,7 +5,7 @@ import 'package:ddstudy_ui/data/services/auth_service.dart';
 import 'package:ddstudy_ui/domain/models/token/refresh_token_request.dart';
 import 'package:ddstudy_ui/internal/config/app_config.dart';
 import 'package:ddstudy_ui/internal/config/token_storage.dart';
-import 'package:ddstudy_ui/ui/app_navigator.dart';
+import 'package:ddstudy_ui/ui/navigation/global_navigator.dart';
 import 'package:dio/dio.dart';
 
 import '../../data/clients/api_client.dart';
@@ -49,10 +49,9 @@ class ApiModule {
             }
           } catch (e) {
             var service = AuthService();
-            if (await service.checkAuth()) {
-              await service.logout();
-              AppNavigator.toLoader();
-            }
+            await service.logout();
+            GlobalNavigator.toLoader();
+
             return handler.resolve(Response(
               requestOptions: options,
               statusCode: 400,

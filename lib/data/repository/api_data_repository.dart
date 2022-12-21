@@ -1,11 +1,17 @@
+import 'dart:io';
+
 import 'package:ddstudy_ui/data/clients/auth_client.dart';
+import 'package:ddstudy_ui/domain/models/post/create_post_request.dart';
+import 'package:ddstudy_ui/domain/models/post/post_model.dart';
 import 'package:ddstudy_ui/domain/models/token/refresh_token_request.dart';
 import 'package:ddstudy_ui/domain/models/token/token_request.dart';
 import 'package:ddstudy_ui/domain/models/token/token_response.dart';
+import 'package:ddstudy_ui/domain/models/user/register_user_request.dart';
 import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
-import 'package:ddstudy_ui/domain/models/user/user_profile.dart';
+import 'package:ddstudy_ui/domain/models/user/user.dart';
 import 'package:ddstudy_ui/domain/repository/api_repository.dart';
 
+import '../../domain/models/attach/attach_meta.dart';
 import '../clients/api_client.dart';
 
 class ApiDataRepository extends ApiRepository {
@@ -22,7 +28,7 @@ class ApiDataRepository extends ApiRepository {
   }
 
   @override
-  Future<UserProfile?> getUser() => _api.getCurrentUserProfile();
+  Future<User?> getUser() => _api.getCurrentUser();
 
   @override
   Future<UserActivity?> getUserActivity() => _api.getCurrentUserActivity();
@@ -31,5 +37,39 @@ class ApiDataRepository extends ApiRepository {
   Future<TokenResponse?> refreshToken(String refreshToken) async =>
       await _auth.refreshToken(RefreshTokenRequest(
         refreshToken: refreshToken,
+      ));
+
+  @override
+  Future<List<PostModel>> getFeed(int skip, int take) =>
+      _api.getFeed(skip, take);
+
+  @override
+  Future<List<AttachMeta>> uploadTemp({required List<File> files}) =>
+      _api.uploadTemp(files: files);
+
+  @override
+  Future addAvatarToUser(AttachMeta model) => _api.addAvatarToUser(model);
+
+  @override
+  Future registerUser({
+    required String name,
+    required String email,
+    required String password,
+    required String retryPassword,
+    required DateTime birthDate,
+  }) =>
+      _auth.registerUser(RegisterUserRequest(
+        name: name,
+        email: email,
+        password: password,
+        retryPassword: retryPassword,
+        birthDate: birthDate.toUtc().toIso8601String(),
+      ));
+
+  @override
+  Future createPost(String annotation, List<AttachMeta> attaches) =>
+      _api.createPost(CreatePostRequest(
+        annotation: annotation,
+        attaches: attaches,
       ));
 }

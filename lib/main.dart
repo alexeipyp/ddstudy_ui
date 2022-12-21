@@ -1,8 +1,13 @@
-import 'package:ddstudy_ui/ui/app_navigator.dart';
-import 'package:ddstudy_ui/ui/roots/loader.dart';
+import 'package:ddstudy_ui/ui/navigation/global_navigator.dart';
+import 'package:ddstudy_ui/ui/widgets/roots/loader.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+import 'data/services/database.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DB.instance.init();
+
   runApp(const MyApp());
 }
 
@@ -13,9 +18,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      navigatorKey: AppNavigator.key,
+      navigatorKey: GlobalNavigator.key,
       onGenerateRoute: (settings) =>
-          AppNavigator.onGeneratedRoutes(settings, context),
+          GlobalNavigator.onGeneratedRoutes(settings, context),
       theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
