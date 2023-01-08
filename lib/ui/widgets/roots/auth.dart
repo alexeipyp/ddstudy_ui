@@ -3,6 +3,8 @@ import 'package:ddstudy_ui/ui/navigation/global_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../utils/exceptions.dart';
+
 class AuthViewModelState {
   final String? login;
   final String? password;

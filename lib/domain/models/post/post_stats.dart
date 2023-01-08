@@ -10,13 +10,13 @@ class PostStats implements DBModel {
   final String? id;
   final int commentsAmount;
   final int likesAmount;
-  final bool isLiked;
+  final DateTime? whenLiked;
 
   PostStats({
     this.id,
     required this.commentsAmount,
     required this.likesAmount,
-    required this.isLiked,
+    this.whenLiked,
   });
 
   factory PostStats.fromJson(Map<String, dynamic> json) =>
@@ -26,24 +26,20 @@ class PostStats implements DBModel {
   @override
   Map<String, dynamic> toMap() => _$PostStatsToJson(this);
 
-  factory PostStats.fromMap(Map<String, dynamic> map) => PostStats(
-        id: map['id'] as String?,
-        commentsAmount: map['commentsAmount'] as int,
-        likesAmount: map['likesAmount'] as int,
-        isLiked: map['isLiked'] == 1 ? true : false,
-      );
+  factory PostStats.fromMap(Map<String, dynamic> map) =>
+      _$PostStatsFromJson(map);
 
   PostStats copyWith({
     String? id,
     int? commentsAmount,
     int? likesAmount,
-    bool? isLiked,
+    DateTime? whenLiked,
   }) {
     return PostStats(
       id: id ?? this.id,
       commentsAmount: commentsAmount ?? this.commentsAmount,
       likesAmount: likesAmount ?? this.likesAmount,
-      isLiked: isLiked ?? this.isLiked,
+      whenLiked: whenLiked ?? this.whenLiked,
     );
   }
 }

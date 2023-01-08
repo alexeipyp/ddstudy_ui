@@ -6,6 +6,9 @@ import 'package:ddstudy_ui/internal/config/shared_prefs.dart';
 import 'package:ddstudy_ui/internal/config/token_storage.dart';
 import 'package:ddstudy_ui/internal/dependencies/repository_module.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_cache_manager_dio/flutter_cache_manager_dio.dart';
+
+import '../../utils/exceptions.dart';
 
 class AuthService {
   final ApiRepository _api = RepositoryModule.apiRepository();
@@ -22,6 +25,7 @@ class AuthService {
           if (user != null) {
             if (!(user == previousUser)) {
               await _dataService.eraseData();
+              DioCacheManager.instance.emptyCache();
             }
             SharedPrefs.setStoredUser(user);
           }
@@ -95,11 +99,3 @@ class AuthService {
     await TokenStorage.setStoredToken(null);
   }
 }
-
-class ServerException implements Exception {}
-
-class WrongCredentialsException implements Exception {}
-
-class NoNetworkException implements Exception {}
-
-class EmailAlreadyBusyException implements Exception {}

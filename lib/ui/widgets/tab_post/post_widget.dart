@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:ddstudy_ui/ui/widgets/tab_post/post_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +18,7 @@ class CreatePostWidget extends StatelessWidget {
           Flexible(
             flex: 2,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: TextFormField(
                 decoration:
                     const InputDecoration(hintText: "Enter post annotation"),

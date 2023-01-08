@@ -10,7 +10,7 @@ class Post implements DBModel {
   final String id;
   final String annotation;
   final String? authorId;
-  final String uploadDate;
+  final DateTime uploadDate;
   Post({
     required this.id,
     required this.annotation,
@@ -30,7 +30,7 @@ class Post implements DBModel {
     String? id,
     String? annotation,
     String? authorId,
-    String? uploadDate,
+    DateTime? uploadDate,
   }) {
     return Post(
       id: id ?? this.id,

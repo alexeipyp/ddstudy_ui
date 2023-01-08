@@ -13,7 +13,7 @@ PostModel _$PostModelFromJson(Map<String, dynamic> json) => PostModel(
       attaches: (json['attaches'] as List<dynamic>)
           .map((e) => PostAttach.fromJson(e as Map<String, dynamic>))
           .toList(),
-      uploadDate: json['uploadDate'] as String,
+      uploadDate: DateTime.parse(json['uploadDate'] as String),
       stats: PostStats.fromJson(json['stats'] as Map<String, dynamic>),
     );
 
@@ -22,6 +22,6 @@ Map<String, dynamic> _$PostModelToJson(PostModel instance) => <String, dynamic>{
       'annotation': instance.annotation,
       'author': instance.author,
       'attaches': instance.attaches,
-      'uploadDate': instance.uploadDate,
+      'uploadDate': instance.uploadDate.toIso8601String(),
       'stats': instance.stats,
     };

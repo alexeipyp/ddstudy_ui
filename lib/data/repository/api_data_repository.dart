@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ddstudy_ui/data/clients/auth_client.dart';
 import 'package:ddstudy_ui/domain/models/post/create_post_request.dart';
+import 'package:ddstudy_ui/domain/models/post/like_post_request.dart';
 import 'package:ddstudy_ui/domain/models/post/post_model.dart';
 import 'package:ddstudy_ui/domain/models/token/refresh_token_request.dart';
 import 'package:ddstudy_ui/domain/models/token/token_request.dart';
@@ -12,6 +13,7 @@ import 'package:ddstudy_ui/domain/models/user/user.dart';
 import 'package:ddstudy_ui/domain/repository/api_repository.dart';
 
 import '../../domain/models/attach/attach_meta.dart';
+import '../../domain/models/post/post_stats.dart';
 import '../clients/api_client.dart';
 
 class ApiDataRepository extends ApiRepository {
@@ -40,8 +42,8 @@ class ApiDataRepository extends ApiRepository {
       ));
 
   @override
-  Future<List<PostModel>> getFeed(int skip, int take) =>
-      _api.getFeed(skip, take);
+  Future<List<PostModel>> getFeed(int take, {DateTime? upTo}) =>
+      _api.getFeed(take, upTo: upTo?.toIso8601String());
 
   @override
   Future<List<AttachMeta>> uploadTemp({required List<File> files}) =>
@@ -72,4 +74,17 @@ class ApiDataRepository extends ApiRepository {
         annotation: annotation,
         attaches: attaches,
       ));
+
+  @override
+  Future<PostStats?> likePost(String postId) => _api.likePost(
+        LikePostRequest(postId: postId),
+      );
+
+  @override
+  Future<List<PostModel>> getFavoritePosts(int take, {DateTime? upTo}) =>
+      _api.getFavoritePosts(take, upTo: upTo?.toIso8601String());
+
+  @override
+  Future<List<PostModel>> getSubscriptionsFeed(int take, {DateTime? upTo}) =>
+      _api.getSubscriptionsFeed(take, upTo: upTo?.toIso8601String());
 }

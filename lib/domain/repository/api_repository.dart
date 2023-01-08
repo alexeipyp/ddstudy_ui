@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ddstudy_ui/domain/models/post/post_stats.dart';
 import 'package:ddstudy_ui/domain/models/user/user.dart';
 
 import '../models/attach/attach_meta.dart';
@@ -16,7 +17,9 @@ abstract class ApiRepository {
   Future<TokenResponse?> refreshToken(String refreshToken);
   Future<User?> getUser();
   Future<UserActivity?> getUserActivity();
-  Future<List<PostModel>> getFeed(int skip, int take);
+  Future<List<PostModel>> getFeed(int take, {DateTime? upTo});
+  Future<List<PostModel>> getSubscriptionsFeed(int take, {DateTime? upTo});
+  Future<List<PostModel>> getFavoritePosts(int take, {DateTime? upTo});
   Future<List<AttachMeta>> uploadTemp({required List<File> files});
   Future addAvatarToUser(AttachMeta model);
   Future registerUser({
@@ -27,4 +30,5 @@ abstract class ApiRepository {
     required DateTime birthDate,
   });
   Future createPost(String annotation, List<AttachMeta> attaches);
+  Future<PostStats?> likePost(String postId);
 }

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:ddstudy_ui/domain/models/attach/attach_meta.dart';
 import 'package:ddstudy_ui/domain/models/post/create_post_request.dart';
+import 'package:ddstudy_ui/domain/models/post/like_post_request.dart';
+import 'package:ddstudy_ui/domain/models/post/post_stats.dart';
 import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
@@ -22,8 +24,16 @@ abstract class ApiClient {
   Future<UserActivity?> getCurrentUserActivity();
 
   @GET("/api/Post/GetFeed")
-  Future<List<PostModel>> getFeed(
-      @Query("skip") int skip, @Query("take") int take);
+  Future<List<PostModel>> getFeed(@Query("take") int take,
+      {@Query("upTo") String? upTo});
+
+  @GET("/api/Post/GetSubscriptionsFeed")
+  Future<List<PostModel>> getSubscriptionsFeed(@Query("take") int take,
+      {@Query("upTo") String? upTo});
+
+  @GET("/api/Post/GetFavoritePosts")
+  Future<List<PostModel>> getFavoritePosts(@Query("take") int take,
+      {@Query("upTo") String? upTo});
 
   @POST("/api/Attach/UploadFiles")
   Future<List<AttachMeta>> uploadTemp(
@@ -34,4 +44,7 @@ abstract class ApiClient {
 
   @POST('/api/Post/CreatePost')
   Future createPost(@Body() CreatePostRequest request);
+
+  @POST('/api/Like/LikePost')
+  Future<PostStats?> likePost(@Body() LikePostRequest request);
 }

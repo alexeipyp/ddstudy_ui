@@ -31,5 +31,13 @@ CREATE TABLE t_PostStats(
     id                  TEXT NOT NULL PRIMARY KEY
     ,commentsAmount     INTEGER NOT NULL
     ,likesAmount        INTEGER NOT NULL
-    ,isLiked            INTEGER NOT NULL
+    ,whenLiked          TEXT
+);
+CREATE TABLE t_PostSubscribed(
+    id                  TEXT NOT NULL PRIMARY KEY
+    ,FOREIGN KEY(id) REFERENCES t_Post(id)
+);
+CREATE TABLE t_PostSearched(
+    id                  TEXT NOT NULL PRIMARY KEY
+    ,FOREIGN KEY(id) REFERENCES t_Post(id)
 );

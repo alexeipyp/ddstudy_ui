@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:ddstudy_ui/internal/config/app_config.dart';
 import 'package:ddstudy_ui/ui/widgets/tab_profile/profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -31,16 +28,9 @@ class ProfileWidget extends StatelessWidget {
                       width: 6,
                     ),
                     shape: BoxShape.circle,
-                    image: (viewModel.user != null &&
-                            viewModel.headers != null &&
-                            viewModel.user!.avatarLink != null)
+                    image: (viewModel.user != null && viewModel.avatar != null)
                         ? DecorationImage(
-                            image: (viewModel.imagePath != null
-                                    ? FileImage(File(viewModel.imagePath!))
-                                    : NetworkImage(
-                                        "$baseUrl${viewModel.user!.avatarLink}",
-                                        headers: viewModel.headers))
-                                as ImageProvider,
+                            image: viewModel.avatar!.image,
                             fit: BoxFit.cover,
                           )
                         : null,

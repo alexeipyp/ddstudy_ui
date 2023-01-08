@@ -3,6 +3,7 @@ import 'package:ddstudy_ui/ui/widgets/roots/auth.dart';
 import 'package:ddstudy_ui/ui/widgets/roots/loader.dart';
 import 'package:flutter/material.dart';
 
+import '../../domain/enums/tab_item.dart';
 import '../widgets/tab_register/register_widget.dart';
 
 class NavigationRoutes {
@@ -14,6 +15,13 @@ class NavigationRoutes {
 
 class GlobalNavigator {
   static final key = GlobalKey<NavigatorState>();
+  static final navigationKeys = {
+    TabItemEnum.home: GlobalKey<NavigatorState>(),
+    TabItemEnum.search: GlobalKey<NavigatorState>(),
+    TabItemEnum.post: GlobalKey<NavigatorState>(),
+    TabItemEnum.favorites: GlobalKey<NavigatorState>(),
+    TabItemEnum.profile: GlobalKey<NavigatorState>(),
+  };
 
   static void toLoader() async {
     key.currentState?.pushNamedAndRemoveUntil(

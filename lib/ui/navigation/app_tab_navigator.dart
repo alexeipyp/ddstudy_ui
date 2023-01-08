@@ -1,14 +1,18 @@
-import 'package:ddstudy_ui/domain/enums/app_tab_item.dart';
+import 'package:ddstudy_ui/domain/enums/tab_item.dart';
+import 'package:ddstudy_ui/ui/widgets/common/post_pages/single_post_page/single_post_widget.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/common/post_pages/post_detailed_page/post_detailed_widget.dart';
 
 class AppTabNavigatorRoutes {
   static const String root = '/app/';
   static const String postDetailed = "/app/postDetailed";
+  static const String postAlone = "/app/postAlone";
 }
 
 class AppTabNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
-  final AppTabItemEnum tabItem;
+  final TabItemEnum tabItem;
   const AppTabNavigator({
     Key? key,
     required this.navigatorKey,
@@ -19,11 +23,14 @@ class AppTabNavigator extends StatelessWidget {
           {Object? arg}) =>
       {
         AppTabNavigatorRoutes.root: (context) =>
-            AppTabEnums.tabRoots[tabItem] ??
+            TabEnums.tabRoots[tabItem] ??
             SafeArea(
               child: Text(tabItem.name),
             ),
-        //TabNavigatorRoutes.postDetailed: (context) => PostDetail.create(arg),
+        AppTabNavigatorRoutes.postAlone: (context) =>
+            SinglePostWidget.create(arg),
+        AppTabNavigatorRoutes.postDetailed: (context) =>
+            PostDetailedWidget.create(arg),
       };
 
   @override

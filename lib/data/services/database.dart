@@ -1,5 +1,7 @@
 import 'package:ddstudy_ui/domain/db_model.dart';
 import 'package:ddstudy_ui/domain/models/post/post_attach.dart';
+import 'package:ddstudy_ui/domain/models/post/post_searched.dart';
+import 'package:ddstudy_ui/domain/models/post/post_subscribed.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -20,7 +22,7 @@ class DB {
       var databasePath = await getDatabasesPath();
       var path = join(
         databasePath,
-        "db_v1.0.1.db",
+        "db_v1.0.6.db",
       );
 
       _db = await openDatabase(
@@ -46,6 +48,8 @@ class DB {
     Post: (map) => Post.fromMap(map),
     PostAttach: (map) => PostAttach.fromMap(map),
     PostStats: (map) => PostStats.fromMap(map),
+    PostSearched: (map) => PostSearched.fromMap(map),
+    PostSubscribed: (map) => PostSubscribed.fromMap(map),
   };
 
   String _dbName(Type type) {
@@ -62,7 +66,7 @@ class DB {
     String? orderBy,
   }) async {
     Iterable<Map<String, dynamic>> query;
-    if (whereMap != null) {
+    if (whereMap != null && whereMap.isNotEmpty) {
       var whereBuilder = <String>[];
       var whereArgs = <dynamic>[];
 
@@ -71,12 +75,18 @@ class DB {
           whereBuilder
               .add("$key IN (${List.filled(value.length, '?').join(',')})");
           whereArgs.addAll(value.map((e) => "$e"));
+        } else if (value is WhereCompareArg) {
+          whereBuilder.add(
+              "$key ${ComparisonOperators.operatorString[value.compareOper]} ?");
+          whereArgs.add(value.arg);
+        } else if (value is WhereNullCheckArg) {
+          whereBuilder.add(
+              "$key ${NullCheckOperators.operatorString[value.nullCheckOper]}");
         } else {
           whereBuilder.add("$key = ?");
           whereArgs.add(value);
         }
       });
-
       query = await _db.query(_dbName(T),
           offset: skip,
           limit: take,
@@ -166,4 +176,40 @@ class DB {
     }
     await batch.commit(noResult: true);
   }
+}
+
+enum ComparisonOperatorEnum { equal, notEqual, greater, less }
+
+enum NullCheckOperatorEnum { isNull, isNotNull }
+
+class WhereCompareArg {
+  Object arg;
+  ComparisonOperatorEnum compareOper;
+  WhereCompareArg({
+    required this.arg,
+    required this.compareOper,
+  });
+}
+
+class WhereNullCheckArg {
+  NullCheckOperatorEnum nullCheckOper;
+  WhereNullCheckArg({
+    required this.nullCheckOper,
+  });
+}
+
+class ComparisonOperators {
+  static Map<ComparisonOperatorEnum, String> operatorString = {
+    ComparisonOperatorEnum.equal: "=",
+    ComparisonOperatorEnum.notEqual: "!=",
+    ComparisonOperatorEnum.greater: ">",
+    ComparisonOperatorEnum.less: "<",
+  };
+}
+
+class NullCheckOperators {
+  static Map<NullCheckOperatorEnum, String> operatorString = {
+    NullCheckOperatorEnum.isNull: "IS NULL",
+    NullCheckOperatorEnum.isNotNull: "IS NOT NULL",
+  };
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager_dio/flutter_cache_manager_dio.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/services/auth_service.dart';
-import '../../../domain/enums/app_tab_item.dart';
+import '../../../domain/enums/tab_item.dart';
 import '../../../domain/models/user/user.dart';
 import '../../../internal/config/app_config.dart';
 import '../../../internal/config/shared_prefs.dart';
@@ -18,21 +18,12 @@ class AppViewModel extends ChangeNotifier {
     asyncInit();
   }
 
-  final _navigationKeys = {
-    AppTabItemEnum.home: GlobalKey<NavigatorState>(),
-    AppTabItemEnum.search: GlobalKey<NavigatorState>(),
-    AppTabItemEnum.post: GlobalKey<NavigatorState>(),
-    AppTabItemEnum.favorites: GlobalKey<NavigatorState>(),
-    AppTabItemEnum.profile: GlobalKey<NavigatorState>(),
-  };
-
-  var _currentTab = AppTabEnums.defTab;
-  AppTabItemEnum? beforeTab;
-  AppTabItemEnum get currentTab => _currentTab;
-  void selectTab(AppTabItemEnum tabItemEnum) {
+  var _currentTab = TabEnums.defTab;
+  TabItemEnum? beforeTab;
+  TabItemEnum get currentTab => _currentTab;
+  void selectTab(TabItemEnum tabItemEnum) {
     if (tabItemEnum == _currentTab) {
-      _navigationKeys[tabItemEnum]!
-          .currentState!
+      GlobalNavigator.navigationKeys[tabItemEnum]!.currentState!
           .popUntil((route) => route.isFirst);
     } else {
       beforeTab = _currentTab;
@@ -48,6 +39,7 @@ class AppViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String avatarCacheKey = "avatar";
   Image? _avatar;
   Image? get avatar => _avatar;
   set avatar(Image? val) {
@@ -57,14 +49,22 @@ class AppViewModel extends ChangeNotifier {
 
   void asyncInit() async {
     user = await SharedPrefs.getStoredUser();
-    /*
-    var img = await NetworkAssetBundle(Uri.parse("$baseUrl${user!.avatarLink}"))
-        .load("$baseUrl${user!.avatarLink}?v=1");
-    avatar = Image.memory(
-      img.buffer.asUint8List(),
-      fit: BoxFit.cover,
-    );
-    */
+    await refreshAvatar();
+  }
+
+  Future refreshAvatar() async {
+    if (user!.avatarLink != null) {
+      await DioCacheManager.instance.downloadFile(
+        "$baseUrl${user!.avatarLink}",
+        key: avatarCacheKey,
+        force: true,
+      );
+      var avatarFileInfo =
+          await DioCacheManager.instance.getFileFromCache(avatarCacheKey);
+      if (avatarFileInfo != null) {
+        avatar = Image.file(avatarFileInfo.file);
+      }
+    }
   }
 
   void logout() async {
@@ -85,12 +85,12 @@ class App extends StatelessWidget {
       },
       child: WillPopScope(
           onWillPop: () async {
-            var isFirstRouteInCurrentTab = !await viewModel
-                ._navigationKeys[viewModel.currentTab]!.currentState!
+            var isFirstRouteInCurrentTab = !await GlobalNavigator
+                .navigationKeys[viewModel.currentTab]!.currentState!
                 .maybePop();
             if (isFirstRouteInCurrentTab) {
-              if (viewModel.currentTab != AppTabEnums.defTab) {
-                viewModel.selectTab(AppTabEnums.defTab);
+              if (viewModel.currentTab != TabEnums.defTab) {
+                viewModel.selectTab(TabEnums.defTab);
               }
               return false;
             }
@@ -112,7 +112,7 @@ class App extends StatelessWidget {
               backgroundColor: Theme.of(context).primaryColor,
             ),
             body: Stack(
-                children: AppTabItemEnum.values
+                children: TabItemEnum.values
                     .map((e) => _buildOffstageNavigator(context, e))
                     .toList()),
           )),
@@ -126,13 +126,13 @@ class App extends StatelessWidget {
     );
   }
 
-  Widget _buildOffstageNavigator(BuildContext context, AppTabItemEnum tabItem) {
+  Widget _buildOffstageNavigator(BuildContext context, TabItemEnum tabItem) {
     var viewModel = context.watch<AppViewModel>();
 
     return Offstage(
       offstage: viewModel.currentTab != tabItem,
       child: AppTabNavigator(
-        navigatorKey: viewModel._navigationKeys[tabItem]!,
+        navigatorKey: GlobalNavigator.navigationKeys[tabItem]!,
         tabItem: tabItem,
       ),
     );

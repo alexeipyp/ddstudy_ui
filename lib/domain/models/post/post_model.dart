@@ -14,7 +14,7 @@ class PostModel {
   String? annotation;
   User author;
   List<PostAttach> attaches;
-  String uploadDate;
+  DateTime uploadDate;
   PostStats stats;
 
   PostModel({

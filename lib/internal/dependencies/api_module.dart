@@ -13,22 +13,31 @@ import '../../data/clients/api_client.dart';
 class ApiModule {
   static AuthClient? _authClient;
   static ApiClient? _apiClient;
+  static Dio? _mediaFetcher;
 
-  static AuthClient auth() =>
-      _authClient ??
-      AuthClient(
-        Dio(),
-        baseUrl: baseUrl,
-      );
-  static ApiClient api() =>
-      _apiClient ??
-      ApiClient(
-        _addInterceptors(Dio()),
-        baseUrl: baseUrl,
-      );
+  static AuthClient auth() {
+    _authClient ??= AuthClient(
+      Dio(),
+      baseUrl: baseUrl,
+    );
+    return _authClient!;
+  }
+
+  static ApiClient api() {
+    _apiClient ??= ApiClient(
+      _addInterceptors(Dio()),
+      baseUrl: baseUrl,
+    );
+    return _apiClient!;
+  }
+
+  static Dio media() {
+    _mediaFetcher ??= _addInterceptors(Dio());
+    return _mediaFetcher!;
+  }
 
   static Dio _addInterceptors(Dio dio) {
-    dio.interceptors.add(InterceptorsWrapper(
+    dio.interceptors.add(QueuedInterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await TokenStorage.getAccessToken();
         options.headers.addAll({"Authorization": "Bearer $token"});
@@ -36,7 +45,6 @@ class ApiModule {
       },
       onError: (e, handler) async {
         if (e.response?.statusCode == 401) {
-          dio.lock();
           RequestOptions options = e.response!.requestOptions;
 
           var rt = await TokenStorage.getRefreshToken();
@@ -56,8 +64,6 @@ class ApiModule {
               requestOptions: options,
               statusCode: 400,
             ));
-          } finally {
-            dio.unlock();
           }
           return handler.resolve(await dio.fetch(options));
         } else {
