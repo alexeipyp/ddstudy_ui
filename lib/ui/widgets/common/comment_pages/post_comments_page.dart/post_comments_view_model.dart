@@ -1,6 +1,7 @@
 import 'package:ddstudy_ui/data/services/comment_service.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../internal/config/app_config.dart';
 import '../../comment_display/comment_display_view_models/iterable_comment_display_view_model.dart';
 
 class PostCommentsViewModel extends IterableCommentDisplayViewModel {
@@ -10,9 +11,9 @@ class PostCommentsViewModel extends IterableCommentDisplayViewModel {
   ) : super(
           context: context,
           postId: postId,
-          commentsUploadAmountPerSync: 20,
+          commentsUploadAmountPerSync: AppConfig.commentsUploadAmountPerSync,
           refreshInterval: const Duration(
-            milliseconds: 500,
+            milliseconds: AppConfig.commentsRefreshRateInMilliseconds,
           ),
         );
 

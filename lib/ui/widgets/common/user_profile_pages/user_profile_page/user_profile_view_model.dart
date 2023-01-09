@@ -15,7 +15,7 @@ class UserProfileViewModel extends UserPostDisplayViewModel {
   UserProfileViewModel({required BuildContext context, required this.authorId})
       : super(
           context: context,
-          postsUploadAmountPerSync: 10,
+          postsUploadAmountPerSync: AppConfig.gridViewPostsUploadAmountPerSync,
         ) {
     asyncInit();
   }
@@ -36,7 +36,7 @@ class UserProfileViewModel extends UserPostDisplayViewModel {
   void getAuthorAvatar() async {
     if (user!.avatarLink != null) {
       var avatarFile = await DioCacheManager.instance
-          .getSingleFile("$baseUrl${user!.avatarLink}");
+          .getSingleFile("$AppConfig.baseUrl${user!.avatarLink}");
       avatar = Image.file(avatarFile);
     }
   }

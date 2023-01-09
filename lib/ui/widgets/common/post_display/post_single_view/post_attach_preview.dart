@@ -18,7 +18,7 @@ class PostAttachPreview extends StatelessWidget {
         image: DecorationImage(
           fit: BoxFit.cover,
           image: CachedNetworkImageProvider(
-            "$baseUrl$attachLink",
+            "$AppConfig.baseUrl$attachLink",
             cacheManager: DioCacheManager.instance,
           ),
         ),

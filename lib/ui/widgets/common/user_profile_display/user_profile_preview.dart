@@ -30,13 +30,16 @@ class UserProfilePreview<T extends UserPostDisplayViewModel>
           ),
         ),
         Expanded(
-          child: viewModel.posts == null
-              ? const Center(child: CircularProgressIndicator())
-              : viewModel.posts!.isEmpty
-                  ? const NoneContentWidget(
-                      contentType: ContentTypeEnum.userPosts,
-                    )
-                  : PostGridView<T>(),
+          child: RefreshIndicator(
+            onRefresh: viewModel.refreshPosts,
+            child: viewModel.posts == null
+                ? const Center(child: CircularProgressIndicator())
+                : viewModel.posts!.isEmpty
+                    ? const NoneContentWidget(
+                        contentType: ContentTypeEnum.userPosts,
+                      )
+                    : PostGridView<T>(),
+          ),
         ),
       ]),
     );

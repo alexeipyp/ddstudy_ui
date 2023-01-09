@@ -18,7 +18,7 @@ class ApiModule {
   static AuthClient auth() {
     _authClient ??= AuthClient(
       Dio(),
-      baseUrl: baseUrl,
+      baseUrl: AppConfig.baseUrl,
     );
     return _authClient!;
   }
@@ -26,7 +26,7 @@ class ApiModule {
   static ApiClient api() {
     _apiClient ??= ApiClient(
       _addInterceptors(Dio()),
-      baseUrl: baseUrl,
+      baseUrl: AppConfig.baseUrl,
     );
     return _apiClient!;
   }

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../data/services/data_service.dart';
 import '../../../data/services/sync_service.dart';
 import '../../../domain/enums/tab_item.dart';
+import '../../../internal/config/app_config.dart';
 import '../../../internal/config/shared_prefs.dart';
 import '../../../internal/dependencies/repository_module.dart';
 import '../common/post_display/post_display_view_models/iterable_post_display_view_model.dart';
@@ -19,7 +20,7 @@ class CurrentUserProfileViewModel extends UserPostDisplayViewModel {
   CurrentUserProfileViewModel({required BuildContext context})
       : super(
           context: context,
-          postsUploadAmountPerSync: 30,
+          postsUploadAmountPerSync: AppConfig.gridViewPostsUploadAmountPerSync,
         ) {
     var appmodel = context.read<AppViewModel>();
     appmodel.addListener(() {
