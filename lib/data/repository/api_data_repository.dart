@@ -33,7 +33,8 @@ class ApiDataRepository extends ApiRepository {
   Future<User?> getUser() => _api.getCurrentUser();
 
   @override
-  Future<UserActivity?> getUserActivity() => _api.getCurrentUserActivity();
+  Future<UserActivity?> getUserActivity(String userId) =>
+      _api.getUserActivity(userId);
 
   @override
   Future<TokenResponse?> refreshToken(String refreshToken) async =>
@@ -87,4 +88,9 @@ class ApiDataRepository extends ApiRepository {
   @override
   Future<List<PostModel>> getSubscriptionsFeed(int take, {DateTime? upTo}) =>
       _api.getSubscriptionsFeed(take, upTo: upTo?.toIso8601String());
+
+  @override
+  Future<List<PostModel>> getUserPosts(String userId, int take,
+          {DateTime? upTo}) =>
+      _api.getUserPosts(userId, take, upTo: upTo?.toIso8601String());
 }

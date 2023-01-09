@@ -1,3 +1,4 @@
+import 'package:ddstudy_ui/ui/widgets/common/post_display/none_posts_widget.dart';
 import 'package:ddstudy_ui/ui/widgets/common/post_display/posts_list_view/post_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,12 +13,15 @@ class HomeWidget extends StatelessWidget {
     var viewModel = context.watch<HomeViewModel>();
 
     return RefreshIndicator(
-      onRefresh: viewModel.refreshFeed,
+      onRefresh: viewModel.refreshPosts,
       child: viewModel.posts == null
-          ? viewModel.isLoading == true
-              ? const Center(child: CircularProgressIndicator())
-              : const NoneSubPostsWidget()
-          : const PostListView<HomeViewModel>(),
+          ? const Center(child: CircularProgressIndicator())
+          : viewModel.posts!.isEmpty
+              ? const NonePostWidget(
+                  textMessage:
+                      "Здесь отобразятся публикации тех, на кого подпишитесь",
+                )
+              : const PostListView<HomeViewModel>(),
     );
   }
 
@@ -25,23 +29,6 @@ class HomeWidget extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (BuildContext context) => HomeViewModel(context),
       child: const HomeWidget(),
-    );
-  }
-}
-
-class NoneSubPostsWidget extends StatelessWidget {
-  const NoneSubPostsWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Column(children: const [
-            Text("Нет постов :("),
-          ]),
-        ),
-      ],
     );
   }
 }

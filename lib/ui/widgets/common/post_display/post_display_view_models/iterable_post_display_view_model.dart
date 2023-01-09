@@ -5,9 +5,14 @@ import '../../../../../data/services/data_service.dart';
 import '../../../../../data/services/like_service.dart';
 import '../../../../../data/services/sync_service.dart';
 import '../../../../../domain/models/post/post_model.dart';
+import '../../../../../domain/models/user/user.dart';
+import '../../../../../domain/models/user/user_activity.dart';
 import '../../../../../utils/exceptions.dart';
 import '../../../../navigation/app_tab_navigator.dart';
 import 'post_display_view_model.dart';
+
+part 'grid_post_display_view_model.dart';
+part 'user_post_display_view_model.dart';
 
 class IterablePostDisplayViewModel extends PostDisplayViewModel {
   final int postsUploadAmountPerSync;
@@ -21,7 +26,6 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
     required this.postsUploadAmountPerSync,
     required this.feedType,
   }) : super(context: context) {
-    asyncPostsLoading();
     initializeScrollController();
   }
 
@@ -34,6 +38,11 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
 
   Map<int, int> pager = <int, int>{};
   Map<String, int> postIndexes = <String, int>{};
+  bool isFeedEndReached = false;
+
+  void asyncInit() async {
+    asyncPostsLoading();
+  }
 
   @override
   void onPageChanged(String postId, int pageIndex) {
@@ -71,13 +80,12 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
       var current = lvc.offset;
       var percent = (current / max * 100);
       if (percent > 80) {
-        if (!isLoading) {
+        if (!isLoading && !isFeedEndReached) {
           isLoading = true;
-
           Future.delayed(const Duration(seconds: 1)).then((value) async {
             if (posts != null) {
               var upToDate = posts!.last.uploadDate;
-              await refreshFeed(upToDate: upToDate);
+              await refreshPosts(upToDate: upToDate);
               isLoading = false;
             }
           });
@@ -99,20 +107,21 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
 
   void asyncPostsLoading() async {
     isLoading = true;
-    await refreshFeed();
+    await refreshPosts();
     isLoading = false;
   }
 
-  Future refreshFeed({DateTime? upToDate}) async {
+  Future refreshPosts({DateTime? upToDate}) async {
     try {
-      await _syncService.syncPosts(feedType, postsUploadAmountPerSync,
-          upToDate: upToDate);
+      await syncPosts(upToDate: upToDate);
       if (upToDate != null) {
-        var newPosts = await _dataService
-            .getFeed(feedType, postsUploadAmountPerSync, upToDate: upToDate);
+        var newPosts = await loadPostsFromDB(upToDate: upToDate);
+        if (newPosts.isEmpty) {
+          isFeedEndReached = true;
+        }
         posts = <PostModel>[...posts!, ...newPosts];
       } else {
-        posts = await _dataService.getFeed(feedType, postsUploadAmountPerSync);
+        posts = await loadPostsFromDB(upToDate: upToDate);
       }
       initPostIndexes();
     } on NoNetworkException {
@@ -121,6 +130,13 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
       await displayError("ошибка на сервере");
     }
   }
+
+  Future syncPosts({DateTime? upToDate}) async => await _syncService
+      .syncPosts(feedType, postsUploadAmountPerSync, upToDate: upToDate);
+
+  Future<List<PostModel>> loadPostsFromDB({DateTime? upToDate}) async =>
+      await _dataService.getFeed(feedType, postsUploadAmountPerSync,
+          upToDate: upToDate);
 
   @override
   Future displayError(String errorText) async {

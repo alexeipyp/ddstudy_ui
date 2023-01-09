@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../post_display_view_models/grid_post_display_view_model.dart';
+import '../post_display_view_models/iterable_post_display_view_model.dart';
 import 'grid_post_preview.dart';
 
 class PostGridView<T extends GridPostDisplayViewModel> extends StatelessWidget {

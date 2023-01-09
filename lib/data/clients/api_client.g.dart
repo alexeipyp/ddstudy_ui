@@ -42,9 +42,9 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<UserActivity?> getCurrentUserActivity() async {
+  Future<UserActivity?> getUserActivity(userId) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'userId': userId};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio
@@ -55,7 +55,7 @@ class _ApiClient implements ApiClient {
     )
             .compose(
               _dio.options,
-              '/api/User/GetCurrentUserActivity',
+              '/api/User/GetUserActivity',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -151,6 +151,40 @@ class _ApiClient implements ApiClient {
             .compose(
               _dio.options,
               '/api/Post/GetFavoritePosts',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    var value = _result.data!
+        .map((dynamic i) => PostModel.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<PostModel>> getUserPosts(
+    userId,
+    take, {
+    upTo,
+  }) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'userToVisitId': userId,
+      r'take': take,
+      r'upTo': upTo,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result =
+        await _dio.fetch<List<dynamic>>(_setStreamType<List<PostModel>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/Post/GetUserPosts',
               queryParameters: queryParameters,
               data: _data,
             )

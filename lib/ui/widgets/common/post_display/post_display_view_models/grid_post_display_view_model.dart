@@ -1,8 +1,4 @@
-import 'package:ddstudy_ui/domain/enums/feed_type.dart';
-import 'package:flutter/material.dart';
-
-import '../../../../navigation/app_tab_navigator.dart';
-import 'iterable_post_display_view_model.dart';
+part of 'iterable_post_display_view_model.dart';
 
 class GridPostDisplayViewModel extends IterablePostDisplayViewModel {
   GridPostDisplayViewModel({

@@ -16,7 +16,7 @@ class LikeService {
       var refreshedPostStats = await _api.likePost(postId);
       if (refreshedPostStats != null) {
         refreshedPostStats = refreshedPostStats.copyWith(id: postId);
-        await _dataService.rangeUpdateEntity(refreshedPostStats);
+        await _dataService.updateEntity(refreshedPostStats);
       }
     } on DioError catch (e) {
       if (e.error is SocketException) {

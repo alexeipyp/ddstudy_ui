@@ -3,6 +3,7 @@ import 'package:ddstudy_ui/domain/models/post/post_model.dart';
 import 'package:ddstudy_ui/domain/models/post/post_searched.dart';
 import 'package:ddstudy_ui/domain/models/post/post_stats.dart';
 import 'package:ddstudy_ui/domain/models/post/post_subscribed.dart';
+import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
 
 import '../../domain/enums/feed_type.dart';
 import '../../domain/models/post/post.dart';
@@ -15,11 +16,16 @@ class DataService {
     await DB.instance.createUpdate(user);
   }
 
+  Future<User?> getUser(String userId) async {
+    var res = await DB.instance.get<User>(userId);
+    return res;
+  }
+
   Future rangeUpdateEntities<T extends DBModel>(Iterable<T> elems) async {
     await DB.instance.createUpdateRange(elems);
   }
 
-  Future rangeUpdateEntity<T extends DBModel>(T elem) async {
+  Future updateEntity<T extends DBModel>(T elem) async {
     await DB.instance.createUpdate(elem);
   }
 
@@ -50,8 +56,13 @@ class DataService {
     await DB.instance.cleanTable<PostSubscribed>();
   }
 
+  Future<UserActivity?> getUserActivity(String userId) async {
+    var res = await DB.instance.get<UserActivity>(userId);
+    return res;
+  }
+
   Future<List<PostModel>> getFeed(FeedTypeEnum type, int take,
-      {DateTime? upToDate}) async {
+      {DateTime? upToDate, String? userId}) async {
     List<PostModel> res;
     switch (type) {
       case FeedTypeEnum.subscribeFeed:
@@ -63,8 +74,17 @@ class DataService {
       case FeedTypeEnum.favoritePosts:
         res = await getFavoritePosts(take, upToDate: upToDate);
         break;
+      case FeedTypeEnum.userPosts:
+        res = await getUserPosts(userId!, take, upToDate: upToDate);
+        break;
     }
     return res;
+  }
+
+  Future<List<PostModel>> getUserPosts(String userId, int take,
+      {DateTime? upToDate}) async {
+    return await _getPosts(FeedTypeEnum.userPosts, take,
+        upToDate: upToDate, userId: userId);
   }
 
   Future<List<PostModel>> getSearchFeed(int take, {DateTime? upToDate}) async {
@@ -78,22 +98,32 @@ class DataService {
   }
 
   Future<List<PostModel>> _getPosts(FeedTypeEnum type, int take,
-      {DateTime? upToDate}) async {
+      {DateTime? upToDate, String? userId}) async {
     var res = <PostModel>[];
     List<String> labels = <String>[];
     Map<String, Object?>? whereMap = {};
     switch (type) {
       case FeedTypeEnum.subscribeFeed:
         labels = (await getPostSubscribedLabels()).map((e) => e.id).toList();
+        if (labels.isNotEmpty) {
+          whereMap.addAll({"id": labels});
+        } else {
+          return res;
+        }
         break;
       case FeedTypeEnum.searchFeed:
         labels = (await getPostSearchedLabels()).map((e) => e.id).toList();
+        if (labels.isNotEmpty) {
+          whereMap.addAll({"id": labels});
+        } else {
+          return res;
+        }
         break;
       case FeedTypeEnum.favoritePosts:
         break;
-    }
-    if (labels.isNotEmpty) {
-      whereMap.addAll({"id": labels});
+      case FeedTypeEnum.userPosts:
+        whereMap.addAll({"authorId": userId!});
+        break;
     }
     if (upToDate != null) {
       whereMap.addAll({

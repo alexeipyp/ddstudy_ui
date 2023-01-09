@@ -29,7 +29,8 @@ class PostPreview<T extends PostDisplayViewModel> extends StatelessWidget {
             padding: const EdgeInsets.all(5),
             child: Row(
               children: [
-                PostAuthorPreview(
+                PostAuthorPreview<T>(
+                  authorId: post.author.id,
                   authorName: post.author.name,
                   avatarLink: post.author.avatarLink,
                 ),

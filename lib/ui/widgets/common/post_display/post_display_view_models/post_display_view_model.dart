@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../domain/models/post/post_model.dart';
+import '../../../../navigation/app_tab_navigator.dart';
 
 abstract class PostDisplayViewModel extends ChangeNotifier {
   BuildContext context;
@@ -22,6 +23,11 @@ abstract class PostDisplayViewModel extends ChangeNotifier {
   }
 
   void openPostInDetailedPage(String postId);
+
+  void openAuthorProfilePage(String authorId) {
+    Navigator.of(context)
+        .pushNamed(AppTabNavigatorRoutes.authorProfile, arguments: authorId);
+  }
 
   void onPageChanged(String postId, int pageIndex);
 

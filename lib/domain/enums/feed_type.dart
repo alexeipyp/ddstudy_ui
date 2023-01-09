@@ -1,1 +1,1 @@
-enum FeedTypeEnum { subscribeFeed, searchFeed, favoritePosts }
+enum FeedTypeEnum { subscribeFeed, searchFeed, favoritePosts, userPosts }

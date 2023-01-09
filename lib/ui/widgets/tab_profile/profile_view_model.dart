@@ -4,48 +4,49 @@ import 'package:ddstudy_ui/ui/widgets/common/cam_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../domain/models/user/user.dart';
-import '../../../domain/models/user/user_activity.dart';
+import '../../../data/services/data_service.dart';
+import '../../../data/services/sync_service.dart';
+import '../../../domain/enums/tab_item.dart';
 import '../../../internal/config/shared_prefs.dart';
 import '../../../internal/dependencies/repository_module.dart';
+import '../common/post_display/post_display_view_models/iterable_post_display_view_model.dart';
 import '../roots/app.dart';
 
-class ProfileViewModel extends ChangeNotifier {
-  BuildContext context;
+class CurrentUserProfileViewModel extends UserPostDisplayViewModel {
   final _api = RepositoryModule.apiRepository();
-  ProfileViewModel({required this.context}) {
-    asyncInit();
+  final _dataService = DataService();
+  final _syncService = SyncService();
+  CurrentUserProfileViewModel({required BuildContext context})
+      : super(
+          context: context,
+          postsUploadAmountPerSync: 10,
+        ) {
     var appmodel = context.read<AppViewModel>();
     appmodel.addListener(() {
       avatar = appmodel.avatar;
     });
+    appmodel.addListener(() {
+      if (appmodel.currentTab == _currentTab) {
+        if (!_isInitialized) {
+          _isInitialized = true;
+          asyncInit();
+        }
+      }
+    });
   }
 
-  User? _user;
-  User? get user => _user;
-  set user(User? val) {
-    _user = val;
-    notifyListeners();
-  }
+  final _currentTab = TabItemEnum.profile;
+  bool _isInitialized = false;
 
-  String avatarCacheKey = "avatar";
-  Image? _avatar;
-  Image? get avatar => _avatar;
-  set avatar(Image? val) {
-    _avatar = val;
-    notifyListeners();
-  }
-
-  UserActivity? _userActivity;
-  UserActivity? get userActivity => _userActivity;
-  set userActivity(UserActivity? val) {
-    _userActivity = val;
-    notifyListeners();
-  }
-
+  @override
   void asyncInit() async {
     user = await SharedPrefs.getStoredUser();
-    userActivity = await _api.getUserActivity();
+    if (user != null) {
+      await _syncService.syncUserActivity(user!.id);
+      userActivity = await _dataService.getUserActivity(user!.id);
+    }
+    asyncPostsLoading();
+    initializeScrollController();
   }
 
   Future changePhoto() async {

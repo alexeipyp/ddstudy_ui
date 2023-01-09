@@ -4,7 +4,7 @@ import 'package:ddstudy_ui/ui/widgets/roots/loader.dart';
 import 'package:flutter/material.dart';
 
 import '../../domain/enums/tab_item.dart';
-import '../widgets/tab_register/register_widget.dart';
+import '../widgets/register/register_widget.dart';
 
 class NavigationRoutes {
   static const loader = "/";

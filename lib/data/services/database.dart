@@ -2,6 +2,7 @@ import 'package:ddstudy_ui/domain/db_model.dart';
 import 'package:ddstudy_ui/domain/models/post/post_attach.dart';
 import 'package:ddstudy_ui/domain/models/post/post_searched.dart';
 import 'package:ddstudy_ui/domain/models/post/post_subscribed.dart';
+import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -45,6 +46,7 @@ class DB {
 
   static final _factories = <Type, Function(Map<String, dynamic> map)>{
     User: (map) => User.fromMap(map),
+    UserActivity: (map) => UserActivity.fromMap(map),
     Post: (map) => Post.fromMap(map),
     PostAttach: (map) => PostAttach.fromMap(map),
     PostStats: (map) => PostStats.fromMap(map),

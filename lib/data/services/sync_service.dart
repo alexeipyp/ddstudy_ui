@@ -16,7 +16,16 @@ class SyncService {
   final ApiRepository _api = RepositoryModule.apiRepository();
   final DataService _dataService = DataService();
 
-  Future syncPosts(FeedTypeEnum type, int take, {DateTime? upToDate}) async {
+  Future syncUserActivity(String userId) async {
+    var userActivity = await _api.getUserActivity(userId);
+    if (userActivity != null) {
+      userActivity = userActivity.copyWith(id: userId);
+      _dataService.updateEntity(userActivity);
+    }
+  }
+
+  Future syncPosts(FeedTypeEnum type, int take,
+      {DateTime? upToDate, String? userId}) async {
     try {
       List<PostModel> postModels;
       switch (type) {
@@ -36,6 +45,9 @@ class SyncService {
           break;
         case FeedTypeEnum.favoritePosts:
           postModels = await _api.getFavoritePosts(take, upTo: upToDate);
+          break;
+        case FeedTypeEnum.userPosts:
+          postModels = await _api.getUserPosts(userId!, take, upTo: upToDate);
           break;
       }
       await movePostModelsToDB(postModels);

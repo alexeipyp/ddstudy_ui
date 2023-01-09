@@ -20,8 +20,8 @@ abstract class ApiClient {
   @GET("/api/User/GetCurrentUser")
   Future<User?> getCurrentUser();
 
-  @GET("/api/User/GetCurrentUserActivity")
-  Future<UserActivity?> getCurrentUserActivity();
+  @GET("/api/User/GetUserActivity")
+  Future<UserActivity?> getUserActivity(@Query("userId") String userId);
 
   @GET("/api/Post/GetFeed")
   Future<List<PostModel>> getFeed(@Query("take") int take,
@@ -33,6 +33,11 @@ abstract class ApiClient {
 
   @GET("/api/Post/GetFavoritePosts")
   Future<List<PostModel>> getFavoritePosts(@Query("take") int take,
+      {@Query("upTo") String? upTo});
+
+  @GET("/api/Post/GetUserPosts")
+  Future<List<PostModel>> getUserPosts(
+      @Query("userToVisitId") String userId, @Query("take") int take,
       {@Query("upTo") String? upTo});
 
   @POST("/api/Attach/UploadFiles")

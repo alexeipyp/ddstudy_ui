@@ -32,6 +32,6 @@ class TabEnums {
     TabItemEnum.search: SearchWidget.create(),
     TabItemEnum.post: CreatePostWidget.create(),
     TabItemEnum.favorites: FavoriteWidget.create(),
-    TabItemEnum.profile: ProfileWidget.create(),
+    TabItemEnum.profile: CurrentUserProfileWidget.create(),
   };
 }

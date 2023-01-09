@@ -16,10 +16,12 @@ abstract class ApiRepository {
 
   Future<TokenResponse?> refreshToken(String refreshToken);
   Future<User?> getUser();
-  Future<UserActivity?> getUserActivity();
+  Future<UserActivity?> getUserActivity(String userId);
   Future<List<PostModel>> getFeed(int take, {DateTime? upTo});
   Future<List<PostModel>> getSubscriptionsFeed(int take, {DateTime? upTo});
   Future<List<PostModel>> getFavoritePosts(int take, {DateTime? upTo});
+  Future<List<PostModel>> getUserPosts(String userId, int take,
+      {DateTime? upTo});
   Future<List<AttachMeta>> uploadTemp({required List<File> files});
   Future addAvatarToUser(AttachMeta model);
   Future registerUser({

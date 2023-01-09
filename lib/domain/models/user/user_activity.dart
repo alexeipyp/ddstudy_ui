@@ -2,10 +2,14 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../db_model.dart';
+
 part 'user_activity.g.dart';
 
 @JsonSerializable()
-class UserActivity {
+class UserActivity implements DBModel {
+  @override
+  final String? id;
   final int postsAmount;
   final int followersAmount;
   final int followingAmount;
@@ -14,10 +18,31 @@ class UserActivity {
     required this.postsAmount,
     required this.followersAmount,
     required this.followingAmount,
+    this.id,
   });
 
   factory UserActivity.fromJson(Map<String, dynamic> json) =>
       _$UserActivityFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserActivityToJson(this);
+
+  @override
+  Map<String, dynamic> toMap() => _$UserActivityToJson(this);
+
+  factory UserActivity.fromMap(Map<String, dynamic> map) =>
+      _$UserActivityFromJson(map);
+
+  UserActivity copyWith({
+    String? id,
+    int? postsAmount,
+    int? followersAmount,
+    int? followingAmount,
+  }) {
+    return UserActivity(
+      id: id ?? this.id,
+      postsAmount: postsAmount ?? this.postsAmount,
+      followersAmount: followersAmount ?? this.followersAmount,
+      followingAmount: followingAmount ?? this.followingAmount,
+    );
+  }
 }

@@ -3,11 +3,13 @@ import 'package:ddstudy_ui/ui/widgets/common/post_pages/single_post_page/single_
 import 'package:flutter/material.dart';
 
 import '../widgets/common/post_pages/post_detailed_page/post_detailed_widget.dart';
+import '../widgets/common/user_profile_pages/user_profile_page/user_profile_widget.dart';
 
 class AppTabNavigatorRoutes {
   static const String root = '/app/';
   static const String postDetailed = "/app/postDetailed";
   static const String postAlone = "/app/postAlone";
+  static const String authorProfile = "/app/authorProfile";
 }
 
 class AppTabNavigator extends StatelessWidget {
@@ -31,6 +33,8 @@ class AppTabNavigator extends StatelessWidget {
             SinglePostWidget.create(arg),
         AppTabNavigatorRoutes.postDetailed: (context) =>
             PostDetailedWidget.create(arg),
+        AppTabNavigatorRoutes.authorProfile: (context) =>
+            UserProfileWidget.create(arg),
       };
 
   @override
