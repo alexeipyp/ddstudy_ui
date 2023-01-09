@@ -2,6 +2,7 @@ import 'package:ddstudy_ui/domain/enums/tab_item.dart';
 import 'package:ddstudy_ui/ui/widgets/common/post_pages/single_post_page/single_post_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/common/comment_pages/post_comments_page.dart/post_comments_widget.dart';
 import '../widgets/common/post_pages/post_detailed_page/post_detailed_widget.dart';
 import '../widgets/common/user_profile_pages/user_profile_page/user_profile_widget.dart';
 
@@ -10,6 +11,7 @@ class AppTabNavigatorRoutes {
   static const String postDetailed = "/app/postDetailed";
   static const String postAlone = "/app/postAlone";
   static const String authorProfile = "/app/authorProfile";
+  static const String postComments = "/app/postComments";
 }
 
 class AppTabNavigator extends StatelessWidget {
@@ -35,6 +37,8 @@ class AppTabNavigator extends StatelessWidget {
             PostDetailedWidget.create(arg),
         AppTabNavigatorRoutes.authorProfile: (context) =>
             UserProfileWidget.create(arg),
+        AppTabNavigatorRoutes.postComments: (context) =>
+            PostCommentsWidget.create(arg),
       };
 
   @override

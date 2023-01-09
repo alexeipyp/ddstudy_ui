@@ -28,4 +28,22 @@ class LikeService {
       }
     }
   }
+
+  Future likeComment(String commentId) async {
+    try {
+      var refreshedCommentStats = await _api.likeComment(commentId);
+      if (refreshedCommentStats != null) {
+        refreshedCommentStats = refreshedCommentStats.copyWith(id: commentId);
+        await _dataService.updateEntity(refreshedCommentStats);
+      }
+    } on DioError catch (e) {
+      if (e.error is SocketException) {
+        throw NoNetworkException();
+      } else {
+        if (e.response?.statusCode == 500) {
+          throw ServerException();
+        }
+      }
+    }
+  }
 }

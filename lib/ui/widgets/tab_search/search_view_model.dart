@@ -11,7 +11,7 @@ class SearchViewModel extends GridPostDisplayViewModel {
       : super(
           context: context,
           feedType: FeedTypeEnum.searchFeed,
-          postsUploadAmountPerSync: 10,
+          postsUploadAmountPerSync: 30,
         ) {
     var appmodel = context.read<AppViewModel>();
     appmodel.addListener(() {

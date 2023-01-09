@@ -7,6 +7,8 @@ import 'package:ddstudy_ui/internal/dependencies/repository_module.dart';
 import 'package:dio/dio.dart';
 
 import '../../domain/enums/feed_type.dart';
+import '../../domain/models/comment/comment.dart';
+import '../../domain/models/comment/comment_model.dart';
 import '../../domain/models/post/post.dart';
 import '../../domain/models/post/post_model.dart';
 import '../../domain/repository/api_repository.dart';
@@ -21,6 +23,22 @@ class SyncService {
     if (userActivity != null) {
       userActivity = userActivity.copyWith(id: userId);
       _dataService.updateEntity(userActivity);
+    }
+  }
+
+  Future syncComments(String postId, int take, {DateTime? upToDate}) async {
+    try {
+      List<CommentModel> commentModels;
+      commentModels = await _api.getComments(postId, take, upTo: upToDate);
+      moveCommentModelsToDB(commentModels, postId);
+    } on DioError catch (e) {
+      if (e.error is SocketException) {
+        throw NoNetworkException();
+      } else {
+        if (e.response?.statusCode == 500) {
+          throw ServerException();
+        }
+      }
     }
   }
 
@@ -60,6 +78,23 @@ class SyncService {
         }
       }
     }
+  }
+
+  Future moveCommentModelsToDB(
+      List<CommentModel> commentModels, String postId) async {
+    var authors = commentModels.map((e) => e.author).toSet();
+    var commentStats =
+        commentModels.map((e) => e.stats.copyWith(id: e.id)).toList();
+    var comments = commentModels
+        .map((e) => Comment.fromJson(e.toJson()).copyWith(
+              authorId: e.author.id,
+              postId: postId,
+            ))
+        .toList();
+
+    await _dataService.rangeUpdateEntities(authors);
+    await _dataService.rangeUpdateEntities(comments);
+    await _dataService.rangeUpdateEntities(commentStats);
   }
 
   Future movePostModelsToDB(List<PostModel> postModels) async {

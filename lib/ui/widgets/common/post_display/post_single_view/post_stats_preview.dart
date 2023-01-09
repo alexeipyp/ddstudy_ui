@@ -28,7 +28,7 @@ class PostStatsPreview<T extends PostDisplayViewModel> extends StatelessWidget {
         ),
         Text("${post.stats.likesAmount}"),
         IconButton(
-          onPressed: () {},
+          onPressed: () => viewModel.onCommentsButtonPressed(postId),
           icon: Icon(
             Icons.chat_bubble,
             color: Theme.of(context).primaryColor,

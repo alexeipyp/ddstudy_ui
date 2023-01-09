@@ -37,5 +37,10 @@ abstract class PostDisplayViewModel extends ChangeNotifier {
 
   void onLikeButtonPressed(String postId);
 
+  void onCommentsButtonPressed(String postId) {
+    Navigator.of(context)
+        .pushNamed(AppTabNavigatorRoutes.postComments, arguments: postId);
+  }
+
   Future displayError(String errorText);
 }

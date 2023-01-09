@@ -19,7 +19,7 @@ class CurrentUserProfileViewModel extends UserPostDisplayViewModel {
   CurrentUserProfileViewModel({required BuildContext context})
       : super(
           context: context,
-          postsUploadAmountPerSync: 10,
+          postsUploadAmountPerSync: 30,
         ) {
     var appmodel = context.read<AppViewModel>();
     appmodel.addListener(() {

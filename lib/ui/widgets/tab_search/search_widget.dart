@@ -1,7 +1,8 @@
+import 'package:ddstudy_ui/domain/enums/content_type.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../common/post_display/none_posts_widget.dart';
+import '../common/none_content_widget.dart';
 import '../common/post_display/posts_grid_view/post_grid_view.dart';
 import 'search_view_model.dart';
 
@@ -22,8 +23,8 @@ class SearchWidget extends StatelessWidget {
           child: viewModel.posts == null
               ? const Center(child: CircularProgressIndicator())
               : viewModel.posts!.isEmpty
-                  ? const NonePostWidget(
-                      textMessage: "Нет новых публикаций :(",
+                  ? const NoneContentWidget(
+                      contentType: ContentTypeEnum.search,
                     )
                   : const PostGridView<SearchViewModel>(),
         ),

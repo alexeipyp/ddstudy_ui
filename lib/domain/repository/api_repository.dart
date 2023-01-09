@@ -4,6 +4,8 @@ import 'package:ddstudy_ui/domain/models/post/post_stats.dart';
 import 'package:ddstudy_ui/domain/models/user/user.dart';
 
 import '../models/attach/attach_meta.dart';
+import '../models/comment/comment_model.dart';
+import '../models/comment/comment_stats.dart';
 import '../models/post/post_model.dart';
 import '../models/token/token_response.dart';
 import '../models/user/user_activity.dart';
@@ -33,4 +35,8 @@ abstract class ApiRepository {
   });
   Future createPost(String annotation, List<AttachMeta> attaches);
   Future<PostStats?> likePost(String postId);
+  Future<List<CommentModel>> getComments(String postId, int take,
+      {DateTime? upTo});
+  Future<CommentStats?> likeComment(String commentId);
+  Future commentPost(String postId, String text);
 }

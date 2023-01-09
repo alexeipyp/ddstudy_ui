@@ -1,10 +1,11 @@
+import 'package:ddstudy_ui/domain/enums/content_type.dart';
 import 'package:flutter/material.dart';
 
-class NonePostWidget extends StatelessWidget {
-  final String textMessage;
-  const NonePostWidget({
+class NoneContentWidget extends StatelessWidget {
+  final ContentTypeEnum contentType;
+  const NoneContentWidget({
     Key? key,
-    required this.textMessage,
+    required this.contentType,
   }) : super(key: key);
 
   @override
@@ -19,7 +20,7 @@ class NonePostWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.photo_camera,
+                  ContentEnums.contentTypeIcon[contentType]!,
                   color: widgetColor,
                   size: screenSize.width / 2,
                 ),
@@ -28,7 +29,7 @@ class NonePostWidget extends StatelessWidget {
                     horizontal: 10,
                   ),
                   child: Text(
-                    textMessage,
+                    ContentEnums.contentTypeText[contentType]!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,

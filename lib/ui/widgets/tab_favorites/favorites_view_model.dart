@@ -11,7 +11,7 @@ class FavoriteViewModel extends GridPostDisplayViewModel {
       : super(
           context: context,
           feedType: FeedTypeEnum.favoritePosts,
-          postsUploadAmountPerSync: 10,
+          postsUploadAmountPerSync: 30,
         ) {
     var appmodel = context.read<AppViewModel>();
     appmodel.addListener(() {

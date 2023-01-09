@@ -27,11 +27,12 @@ class PostAuthorPreview<T extends PostDisplayViewModel>
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(
-              "$baseUrl$avatarLink",
-              cacheManager: DioCacheManager.instance,
-            ),
-          ),
+              backgroundImage: avatarLink != null
+                  ? CachedNetworkImageProvider(
+                      "$baseUrl$avatarLink",
+                      cacheManager: DioCacheManager.instance,
+                    )
+                  : null),
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(authorName),

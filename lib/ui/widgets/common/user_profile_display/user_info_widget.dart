@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../tab_profile/profile_view_model.dart';
+
 class UserInfoWidget<T extends UserPostDisplayViewModel>
     extends StatelessWidget {
   const UserInfoWidget({Key? key}) : super(key: key);
@@ -17,23 +19,13 @@ class UserInfoWidget<T extends UserPostDisplayViewModel>
       children: [
         Expanded(
           flex: 3,
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            constraints: const BoxConstraints.expand(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).primaryColor,
-                width: 3,
-              ),
-              shape: BoxShape.circle,
-              image: (viewModel.avatar != null)
-                  ? DecorationImage(
-                      image: viewModel.avatar!.image,
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-          ),
+          child: T == CurrentUserProfileViewModel
+              ? _CurrentUserAvatarDisplay<CurrentUserProfileViewModel>(
+                  avatar: viewModel.avatar,
+                )
+              : _AvatarDisplay(
+                  image: viewModel.avatar,
+                ),
         ),
         Expanded(
           flex: 5,
@@ -41,7 +33,7 @@ class UserInfoWidget<T extends UserPostDisplayViewModel>
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Spacer(),
+              const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -65,7 +57,7 @@ class UserInfoWidget<T extends UserPostDisplayViewModel>
                   ),
                 ],
               ),
-              Spacer(),
+              const Spacer(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -77,11 +69,58 @@ class UserInfoWidget<T extends UserPostDisplayViewModel>
                           "birth at: ${viewModel.user == null ? "-" : dtf.format(viewModel.user!.birthDate)}"),
                 ],
               ),
-              Spacer(),
+              const Spacer(),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CurrentUserAvatarDisplay<T extends CurrentUserProfileViewModel>
+    extends StatelessWidget {
+  Image? avatar;
+  _CurrentUserAvatarDisplay({
+    super.key,
+    this.avatar,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    T viewModel = context.watch<T>();
+    return GestureDetector(
+      onTap: viewModel.changePhoto,
+      child: _AvatarDisplay(image: avatar),
+    );
+  }
+}
+
+class _AvatarDisplay extends StatelessWidget {
+  Image? image;
+  _AvatarDisplay({
+    Key? key,
+    this.image,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(10),
+      constraints: const BoxConstraints.expand(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).primaryColor,
+          width: 3,
+        ),
+        shape: BoxShape.circle,
+        image: (image != null)
+            ? DecorationImage(
+                image: image!.image,
+                fit: BoxFit.cover,
+              )
+            : null,
+      ),
     );
   }
 }

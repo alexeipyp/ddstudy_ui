@@ -6,6 +6,9 @@ import 'package:ddstudy_ui/domain/models/post/post_subscribed.dart';
 import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
 
 import '../../domain/enums/feed_type.dart';
+import '../../domain/models/comment/comment.dart';
+import '../../domain/models/comment/comment_model.dart';
+import '../../domain/models/comment/comment_stats.dart';
 import '../../domain/models/post/post.dart';
 import '../../domain/models/post/post_attach.dart';
 import '../../domain/models/user/user.dart';
@@ -58,6 +61,40 @@ class DataService {
 
   Future<UserActivity?> getUserActivity(String userId) async {
     var res = await DB.instance.get<UserActivity>(userId);
+    return res;
+  }
+
+  Future<List<CommentModel>> getComments(String postId,
+      {DateTime? upToDate, int? take}) async {
+    var res = <CommentModel>[];
+    Map<String, Object?>? whereMap = {"postId": postId};
+    if (upToDate != null) {
+      whereMap.addAll({
+        "uploadDate": WhereCompareArg(
+          arg: upToDate.toIso8601String(),
+          compareOper: ComparisonOperatorEnum.greater,
+        )
+      });
+    }
+    var comments = await DB.instance.getAll<Comment>(
+      orderBy: "uploadDate ASC",
+      whereMap: whereMap,
+      take: take,
+    );
+
+    for (var comment in comments) {
+      var author = await DB.instance.get<User>(comment.authorId);
+      var stats = await DB.instance.get<CommentStats>(comment.id);
+      if (author != null && stats != null) {
+        res.add(CommentModel(
+          id: comment.id,
+          author: author,
+          text: comment.text,
+          uploadDate: comment.uploadDate,
+          stats: stats,
+        ));
+      }
+    }
     return res;
   }
 
@@ -203,6 +240,11 @@ class DataService {
 
   Future<PostStats?> getPostStats(String postId) async {
     var res = await DB.instance.get<PostStats>(postId);
+    return res;
+  }
+
+  Future<CommentStats?> getCommentStats(String commentId) async {
+    var res = await DB.instance.get<CommentStats>(commentId);
     return res;
   }
 

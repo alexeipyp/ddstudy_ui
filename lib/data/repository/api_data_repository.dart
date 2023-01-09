@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:ddstudy_ui/data/clients/auth_client.dart';
+import 'package:ddstudy_ui/domain/models/comment/comment_post_request.dart';
+import 'package:ddstudy_ui/domain/models/comment/comment_stats.dart';
+import 'package:ddstudy_ui/domain/models/comment/comment_model.dart';
 import 'package:ddstudy_ui/domain/models/post/create_post_request.dart';
 import 'package:ddstudy_ui/domain/models/post/like_post_request.dart';
 import 'package:ddstudy_ui/domain/models/post/post_model.dart';
@@ -13,6 +16,7 @@ import 'package:ddstudy_ui/domain/models/user/user.dart';
 import 'package:ddstudy_ui/domain/repository/api_repository.dart';
 
 import '../../domain/models/attach/attach_meta.dart';
+import '../../domain/models/comment/like_comment_request.dart';
 import '../../domain/models/post/post_stats.dart';
 import '../clients/api_client.dart';
 
@@ -93,4 +97,18 @@ class ApiDataRepository extends ApiRepository {
   Future<List<PostModel>> getUserPosts(String userId, int take,
           {DateTime? upTo}) =>
       _api.getUserPosts(userId, take, upTo: upTo?.toIso8601String());
+
+  @override
+  Future commentPost(String postId, String text) => _api.commentPost(
+        CommentPostRequest(postId: postId, text: text),
+      );
+
+  @override
+  Future<List<CommentModel>> getComments(String postId, int take,
+          {DateTime? upTo}) =>
+      _api.getComments(postId, take, upTo: upTo?.toIso8601String());
+
+  @override
+  Future<CommentStats?> likeComment(String commentId) =>
+      _api.likeComment(LikeCommentRequest(commentId: commentId));
 }

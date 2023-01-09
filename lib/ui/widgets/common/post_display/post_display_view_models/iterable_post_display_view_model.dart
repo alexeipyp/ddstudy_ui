@@ -29,6 +29,12 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
     initializeScrollController();
   }
 
+  @override
+  void dispose() {
+    lvc.dispose();
+    super.dispose();
+  }
+
   List<PostModel>? _posts;
   List<PostModel>? get posts => _posts;
   set posts(List<PostModel>? val) {
@@ -121,7 +127,7 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
         }
         posts = <PostModel>[...posts!, ...newPosts];
       } else {
-        posts = await loadPostsFromDB(upToDate: upToDate);
+        posts = await loadPostsFromDB();
       }
       initPostIndexes();
     } on NoNetworkException {
