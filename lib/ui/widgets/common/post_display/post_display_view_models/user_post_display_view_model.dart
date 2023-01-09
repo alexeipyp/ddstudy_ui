@@ -1,6 +1,6 @@
 part of 'iterable_post_display_view_model.dart';
 
-class UserPostDisplayViewModel extends GridPostDisplayViewModel {
+abstract class UserPostDisplayViewModel extends GridPostDisplayViewModel {
   UserPostDisplayViewModel({
     required BuildContext context,
     required int postsUploadAmountPerSync,
@@ -17,7 +17,6 @@ class UserPostDisplayViewModel extends GridPostDisplayViewModel {
     notifyListeners();
   }
 
-  String avatarCacheKey = "avatar";
   Image? _avatar;
   Image? get avatar => _avatar;
   set avatar(Image? val) {
@@ -29,6 +28,13 @@ class UserPostDisplayViewModel extends GridPostDisplayViewModel {
   UserActivity? get userActivity => _userActivity;
   set userActivity(UserActivity? val) {
     _userActivity = val;
+    notifyListeners();
+  }
+
+  SubscribeStatus? _subscribeStatus;
+  SubscribeStatus? get subscribeStatus => _subscribeStatus;
+  set subscribeStatus(SubscribeStatus? val) {
+    _subscribeStatus = val;
     notifyListeners();
   }
 
@@ -49,4 +55,7 @@ class UserPostDisplayViewModel extends GridPostDisplayViewModel {
     }
     return res;
   }
+
+  void onFollowUserButtonClicked();
+  void onUndoFollowUserButtonClicked();
 }

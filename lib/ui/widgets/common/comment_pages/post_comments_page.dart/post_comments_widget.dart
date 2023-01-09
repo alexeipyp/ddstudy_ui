@@ -58,7 +58,7 @@ class CreateCommentWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 5),
           child: ElevatedButton(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             onPressed: viewModel.sendComment,

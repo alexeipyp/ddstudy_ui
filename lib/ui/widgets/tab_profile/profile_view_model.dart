@@ -75,4 +75,10 @@ class CurrentUserProfileViewModel extends UserPostDisplayViewModel {
       }
     }
   }
+
+  @override
+  void onFollowUserButtonClicked() {}
+
+  @override
+  void onUndoFollowUserButtonClicked() {}
 }

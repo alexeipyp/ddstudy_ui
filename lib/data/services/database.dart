@@ -4,6 +4,7 @@ import 'package:ddstudy_ui/domain/models/comment/comment_stats.dart';
 import 'package:ddstudy_ui/domain/models/post/post_attach.dart';
 import 'package:ddstudy_ui/domain/models/post/post_searched.dart';
 import 'package:ddstudy_ui/domain/models/post/post_subscribed.dart';
+import 'package:ddstudy_ui/domain/models/user/subscribe_status.dart';
 import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,7 +26,7 @@ class DB {
       var databasePath = await getDatabasesPath();
       var path = join(
         databasePath,
-        "db_v1.0.7.db",
+        "db_v1.0.8.db",
       );
 
       _db = await openDatabase(
@@ -56,6 +57,7 @@ class DB {
     PostSubscribed: (map) => PostSubscribed.fromMap(map),
     Comment: (map) => Comment.fromMap(map),
     CommentStats: (map) => CommentStats.fromMap(map),
+    SubscribeStatus: (map) => SubscribeStatus.fromMap(map),
   };
 
   String _dbName(Type type) {

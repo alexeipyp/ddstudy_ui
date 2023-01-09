@@ -6,14 +6,17 @@ import 'package:ddstudy_ui/domain/models/comment/like_comment_request.dart';
 import 'package:ddstudy_ui/domain/models/post/create_post_request.dart';
 import 'package:ddstudy_ui/domain/models/post/like_post_request.dart';
 import 'package:ddstudy_ui/domain/models/post/post_stats.dart';
-import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
+import 'package:ddstudy_ui/domain/models/subscribe/follow_user_request.dart';
+import 'package:ddstudy_ui/domain/models/user/subscribe_status.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../domain/models/comment/comment_model.dart';
 import '../../domain/models/comment/comment_stats.dart';
 import '../../domain/models/post/post_model.dart';
+import '../../domain/models/subscribe/undo_follow_user_request.dart';
 import '../../domain/models/user/user.dart';
+import '../../domain/models/user/user_activity_model.dart';
 
 part 'api_client.g.dart';
 
@@ -25,7 +28,7 @@ abstract class ApiClient {
   Future<User?> getCurrentUser();
 
   @GET("/api/User/GetUserActivity")
-  Future<UserActivity?> getUserActivity(@Query("userId") String userId);
+  Future<UserActivityModel?> getUserActivity(@Query("userId") String userId);
 
   @GET("/api/Post/GetFeed")
   Future<List<PostModel>> getFeed(@Query("take") int take,
@@ -67,4 +70,11 @@ abstract class ApiClient {
 
   @POST('/api/Post/CommentPost')
   Future commentPost(@Body() CommentPostRequest request);
+
+  @POST('/api/Subscribe/FollowUser')
+  Future<SubscribeStatus?> followUser(@Body() FollowUserRequest request);
+
+  @POST('/api/Subscribe/UndoFollowUser')
+  Future<SubscribeStatus?> undoFollowUser(
+      @Body() UndoFollowUserRequest request);
 }

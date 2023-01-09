@@ -1,4 +1,5 @@
 import 'package:ddstudy_ui/domain/enums/feed_type.dart';
+import 'package:ddstudy_ui/domain/models/user/subscribe_status.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../data/services/data_service.dart';

@@ -57,3 +57,9 @@ CREATE TABLE t_CommentStats(
     ,whenLiked          TEXT
     ,FOREIGN KEY(id) REFERENCES t_Comment(id)
 );
+CREATE TABLE t_SubscribeStatus(
+    id                  TEXT NOT NULL PRIMARY KEY
+    ,isSubscribeRequestSent INTEGER NOT NULL
+    ,isFollowing
+    ,FOREIGN KEY(id) REFERENCES t_User(id)
+);

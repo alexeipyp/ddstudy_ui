@@ -18,7 +18,7 @@ class UserProfilePreview<T extends UserPostDisplayViewModel>
     return SafeArea(
       child: Column(children: [
         SizedBox(
-          height: screenSize.height * 0.2,
+          height: screenSize.height * 0.18,
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(

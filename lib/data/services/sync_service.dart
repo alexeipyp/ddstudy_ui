@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:ddstudy_ui/data/services/data_service.dart';
 import 'package:ddstudy_ui/domain/models/post/post_searched.dart';
 import 'package:ddstudy_ui/domain/models/post/post_subscribed.dart';
+import 'package:ddstudy_ui/domain/models/user/subscribe_status.dart';
+import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
 import 'package:ddstudy_ui/internal/dependencies/repository_module.dart';
 import 'package:dio/dio.dart';
 
@@ -11,6 +13,7 @@ import '../../domain/models/comment/comment.dart';
 import '../../domain/models/comment/comment_model.dart';
 import '../../domain/models/post/post.dart';
 import '../../domain/models/post/post_model.dart';
+import '../../domain/models/user/user_activity_model.dart';
 import '../../domain/repository/api_repository.dart';
 import '../../utils/exceptions.dart';
 
@@ -19,10 +22,9 @@ class SyncService {
   final DataService _dataService = DataService();
 
   Future syncUserActivity(String userId) async {
-    var userActivity = await _api.getUserActivity(userId);
-    if (userActivity != null) {
-      userActivity = userActivity.copyWith(id: userId);
-      _dataService.updateEntity(userActivity);
+    var userActivityModel = await _api.getUserActivity(userId);
+    if (userActivityModel != null) {
+      await moveUserActivityModelToDB(userActivityModel, userId);
     }
   }
 
@@ -78,6 +80,20 @@ class SyncService {
         }
       }
     }
+  }
+
+  Future moveUserActivityModelToDB(
+      UserActivityModel model, String userId) async {
+    var userActivity = UserActivity.fromJson(model.toJson()).copyWith(
+      id: userId,
+    );
+    var subscribeStatus =
+        SubscribeStatus.fromJson(model.subscribeStatus.toJson()).copyWith(
+      id: userId,
+    );
+
+    await _dataService.updateEntity(userActivity);
+    await _dataService.updateEntity(subscribeStatus);
   }
 
   Future moveCommentModelsToDB(

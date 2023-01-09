@@ -11,7 +11,6 @@ class CommentListView<T extends IterableCommentDisplayViewModel>
   @override
   Widget build(BuildContext context) {
     T viewModel = context.watch<T>();
-    var screenSize = MediaQuery.of(context).size;
     return ListView.separated(
       controller: viewModel.lvc,
       physics: const AlwaysScrollableScrollPhysics(),

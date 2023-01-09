@@ -8,7 +8,8 @@ import '../models/comment/comment_model.dart';
 import '../models/comment/comment_stats.dart';
 import '../models/post/post_model.dart';
 import '../models/token/token_response.dart';
-import '../models/user/user_activity.dart';
+import '../models/user/subscribe_status.dart';
+import '../models/user/user_activity_model.dart';
 
 abstract class ApiRepository {
   Future<TokenResponse?> getToken({
@@ -18,7 +19,7 @@ abstract class ApiRepository {
 
   Future<TokenResponse?> refreshToken(String refreshToken);
   Future<User?> getUser();
-  Future<UserActivity?> getUserActivity(String userId);
+  Future<UserActivityModel?> getUserActivity(String userId);
   Future<List<PostModel>> getFeed(int take, {DateTime? upTo});
   Future<List<PostModel>> getSubscriptionsFeed(int take, {DateTime? upTo});
   Future<List<PostModel>> getFavoritePosts(int take, {DateTime? upTo});
@@ -39,4 +40,6 @@ abstract class ApiRepository {
       {DateTime? upTo});
   Future<CommentStats?> likeComment(String commentId);
   Future commentPost(String postId, String text);
+  Future<SubscribeStatus?> followUser(String authorId);
+  Future<SubscribeStatus?> undoFollowUser(String authorId);
 }

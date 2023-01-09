@@ -7,12 +7,15 @@ import 'package:ddstudy_ui/domain/models/comment/comment_model.dart';
 import 'package:ddstudy_ui/domain/models/post/create_post_request.dart';
 import 'package:ddstudy_ui/domain/models/post/like_post_request.dart';
 import 'package:ddstudy_ui/domain/models/post/post_model.dart';
+import 'package:ddstudy_ui/domain/models/subscribe/follow_user_request.dart';
+import 'package:ddstudy_ui/domain/models/subscribe/undo_follow_user_request.dart';
 import 'package:ddstudy_ui/domain/models/token/refresh_token_request.dart';
 import 'package:ddstudy_ui/domain/models/token/token_request.dart';
 import 'package:ddstudy_ui/domain/models/token/token_response.dart';
 import 'package:ddstudy_ui/domain/models/user/register_user_request.dart';
-import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
+import 'package:ddstudy_ui/domain/models/user/subscribe_status.dart';
 import 'package:ddstudy_ui/domain/models/user/user.dart';
+import 'package:ddstudy_ui/domain/models/user/user_activity_model.dart';
 import 'package:ddstudy_ui/domain/repository/api_repository.dart';
 
 import '../../domain/models/attach/attach_meta.dart';
@@ -37,7 +40,7 @@ class ApiDataRepository extends ApiRepository {
   Future<User?> getUser() => _api.getCurrentUser();
 
   @override
-  Future<UserActivity?> getUserActivity(String userId) =>
+  Future<UserActivityModel?> getUserActivity(String userId) =>
       _api.getUserActivity(userId);
 
   @override
@@ -111,4 +114,12 @@ class ApiDataRepository extends ApiRepository {
   @override
   Future<CommentStats?> likeComment(String commentId) =>
       _api.likeComment(LikeCommentRequest(commentId: commentId));
+
+  @override
+  Future<SubscribeStatus?> followUser(String authorId) =>
+      _api.followUser(FollowUserRequest(authorId: authorId));
+
+  @override
+  Future<SubscribeStatus?> undoFollowUser(String authorId) =>
+      _api.undoFollowUser(UndoFollowUserRequest(authorId: authorId));
 }

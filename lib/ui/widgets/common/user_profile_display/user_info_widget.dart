@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:ddstudy_ui/domain/enums/subscribe_state.dart';
 import 'package:ddstudy_ui/ui/widgets/common/post_display/post_display_view_models/iterable_post_display_view_model.dart';
+import 'package:ddstudy_ui/ui/widgets/common/user_profile_display/subscribe_button_state.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -28,11 +30,23 @@ class UserInfoWidget<T extends UserPostDisplayViewModel>
                 ),
         ),
         Expanded(
-          flex: 5,
+          flex: 7,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Spacer(),
+              Row(
+                children: [
+                  _FormattedText(
+                      textString:
+                          "birth at: ${viewModel.user == null ? "-" : dtf.format(viewModel.user!.birthDate)}"),
+                  const Spacer(),
+                  T != CurrentUserProfileViewModel
+                      ? _SubscribeButton<T>()
+                      : const SizedBox.shrink(),
+                ],
+              ),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -58,18 +72,6 @@ class UserInfoWidget<T extends UserPostDisplayViewModel>
                 ],
               ),
               const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _FormattedText(
-                      textString:
-                          "email: ${viewModel.user == null ? "-" : viewModel.user!.email}"),
-                  _FormattedText(
-                      textString:
-                          "birth at: ${viewModel.user == null ? "-" : dtf.format(viewModel.user!.birthDate)}"),
-                ],
-              ),
-              const Spacer(),
             ],
           ),
         ),
@@ -78,10 +80,37 @@ class UserInfoWidget<T extends UserPostDisplayViewModel>
   }
 }
 
+class _SubscribeButton<T extends UserPostDisplayViewModel>
+    extends StatelessWidget {
+  const _SubscribeButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    T viewModel = context.watch<T>();
+    var subState = viewModel.subscribeStatus != null
+        ? SubscribeStates.getSubscribeState(viewModel.subscribeStatus!)
+        : null;
+    return subState != null
+        ? Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: ElevatedButton(
+              style: SubscribeButtonState.subscribeButtonStyle[subState]!,
+              onPressed: subState == SubscribeStateEnum.notSentRequest
+                  ? viewModel.onFollowUserButtonClicked
+                  : subState == SubscribeStateEnum.subscribed
+                      ? viewModel.onUndoFollowUserButtonClicked
+                      : null,
+              child: Text(SubscribeButtonState.subscribeButtonText[subState]!),
+            ),
+          )
+        : const SizedBox.shrink();
+  }
+}
+
 class _CurrentUserAvatarDisplay<T extends CurrentUserProfileViewModel>
     extends StatelessWidget {
-  Image? avatar;
-  _CurrentUserAvatarDisplay({
+  final Image? avatar;
+  const _CurrentUserAvatarDisplay({
     super.key,
     this.avatar,
   });
@@ -97,8 +126,8 @@ class _CurrentUserAvatarDisplay<T extends CurrentUserProfileViewModel>
 }
 
 class _AvatarDisplay extends StatelessWidget {
-  Image? image;
-  _AvatarDisplay({
+  final Image? image;
+  const _AvatarDisplay({
     Key? key,
     this.image,
   }) : super(key: key);

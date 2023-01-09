@@ -42,13 +42,13 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<UserActivity?> getUserActivity(userId) async {
+  Future<UserActivityModel?> getUserActivity(userId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'userId': userId};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio
-        .fetch<Map<String, dynamic>?>(_setStreamType<UserActivity>(Options(
+        .fetch<Map<String, dynamic>?>(_setStreamType<UserActivityModel>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -61,7 +61,7 @@ class _ApiClient implements ApiClient {
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value =
-        _result.data == null ? null : UserActivity.fromJson(_result.data!);
+        _result.data == null ? null : UserActivityModel.fromJson(_result.data!);
     return value;
   }
 
@@ -376,6 +376,56 @@ class _ApiClient implements ApiClient {
         )
         .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<SubscribeStatus?> followUser(request) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>?>(_setStreamType<SubscribeStatus>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/Subscribe/FollowUser',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value =
+        _result.data == null ? null : SubscribeStatus.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SubscribeStatus?> undoFollowUser(request) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>?>(_setStreamType<SubscribeStatus>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/Subscribe/UndoFollowUser',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value =
+        _result.data == null ? null : SubscribeStatus.fromJson(_result.data!);
     return value;
   }
 

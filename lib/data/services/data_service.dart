@@ -11,6 +11,7 @@ import '../../domain/models/comment/comment_model.dart';
 import '../../domain/models/comment/comment_stats.dart';
 import '../../domain/models/post/post.dart';
 import '../../domain/models/post/post_attach.dart';
+import '../../domain/models/user/subscribe_status.dart';
 import '../../domain/models/user/user.dart';
 import 'database.dart';
 
@@ -61,6 +62,11 @@ class DataService {
 
   Future<UserActivity?> getUserActivity(String userId) async {
     var res = await DB.instance.get<UserActivity>(userId);
+    return res;
+  }
+
+  Future<SubscribeStatus?> getSubscribeStatus(String userId) async {
+    var res = await DB.instance.get<SubscribeStatus>(userId);
     return res;
   }
 
