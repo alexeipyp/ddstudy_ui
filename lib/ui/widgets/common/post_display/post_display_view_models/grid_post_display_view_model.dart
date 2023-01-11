@@ -13,6 +13,7 @@ class GridPostDisplayViewModel extends IterablePostDisplayViewModel {
 
   void openPostInSinglePage(String postId) {
     Navigator.of(context)
-        .pushNamed(AppTabNavigatorRoutes.postAlone, arguments: postId);
+        .pushNamed(AppTabNavigatorRoutes.postAlone, arguments: postId)
+        .then((_) => refreshPostStats(postId));
   }
 }

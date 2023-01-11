@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../data/services/data_service.dart';
 import '../../../../../data/services/like_service.dart';
+import '../../../../../data/services/sync_service.dart';
 import '../../../../../domain/models/post/post_model.dart';
 import '../../../../navigation/app_tab_navigator.dart';
 import 'post_display_view_model.dart';
@@ -10,6 +11,7 @@ class SinglePostDisplayViewModel extends PostDisplayViewModel {
   final String postId;
   final _dataService = DataService();
   final _likeService = LikeService();
+  final _syncService = SyncService();
   SinglePostDisplayViewModel({
     required BuildContext context,
     required this.postId,
@@ -45,6 +47,11 @@ class SinglePostDisplayViewModel extends PostDisplayViewModel {
   @override
   void onLikeButtonPressed(String postId) async {
     await _likeService.likePost(postId);
+    await refreshDisplayedPostsStats();
+  }
+
+  @override
+  Future refreshDisplayedPostsStats() async {
     var refreshedPostStats = await _dataService.getPostStats(postId);
     if (refreshedPostStats != null) {
       post!.stats = refreshedPostStats;
@@ -71,5 +78,11 @@ class SinglePostDisplayViewModel extends PostDisplayViewModel {
     var postAttachesLinks = post!.attaches.map((e) => e.attachLink).toList();
     Navigator.of(context).pushNamed(AppTabNavigatorRoutes.postDetailed,
         arguments: postAttachesLinks);
+  }
+
+  @override
+  Future syncPostStats(String postId) async {
+    await _syncService.syncPostStats(postId);
+    await refreshDisplayedPostsStats();
   }
 }

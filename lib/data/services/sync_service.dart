@@ -28,6 +28,14 @@ class SyncService {
     }
   }
 
+  Future syncPostStats(String postId) async {
+    var postStats = await _api.getPostStats(postId);
+    if (postStats != null) {
+      postStats = postStats.copyWith(id: postId);
+      await _dataService.updateEntity(postStats);
+    }
+  }
+
   Future syncComments(String postId, int take, {DateTime? upToDate}) async {
     try {
       List<CommentModel> commentModels;

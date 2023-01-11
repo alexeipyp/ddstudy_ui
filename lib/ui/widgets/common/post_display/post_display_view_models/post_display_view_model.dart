@@ -26,8 +26,12 @@ abstract class PostDisplayViewModel extends ChangeNotifier {
 
   void openAuthorProfilePage(String authorId) {
     Navigator.of(context)
-        .pushNamed(AppTabNavigatorRoutes.authorProfile, arguments: authorId);
+        .pushNamed(AppTabNavigatorRoutes.authorProfile, arguments: authorId)
+        .then((_) => refreshDisplayedPostsStats());
   }
+
+  void refreshDisplayedPostsStats();
+  void syncPostStats(String postId);
 
   void onPageChanged(String postId, int pageIndex);
 
@@ -39,7 +43,8 @@ abstract class PostDisplayViewModel extends ChangeNotifier {
 
   void onCommentsButtonPressed(String postId) {
     Navigator.of(context)
-        .pushNamed(AppTabNavigatorRoutes.postComments, arguments: postId);
+        .pushNamed(AppTabNavigatorRoutes.postComments, arguments: postId)
+        .then((_) => syncPostStats(postId));
   }
 
   Future displayError(String errorText);

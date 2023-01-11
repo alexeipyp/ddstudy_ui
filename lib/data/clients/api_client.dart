@@ -77,4 +77,7 @@ abstract class ApiClient {
   @POST('/api/Subscribe/UndoFollowUser')
   Future<SubscribeStatus?> undoFollowUser(
       @Body() UndoFollowUserRequest request);
+
+  @GET('/api/Post/GetPostStats')
+  Future<PostStats?> getPostStats(@Query("postId") String postId);
 }

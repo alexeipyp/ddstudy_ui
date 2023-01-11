@@ -104,11 +104,24 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
   @override
   void onLikeButtonPressed(String postId) async {
     await _likeService.likePost(postId);
+    await refreshPostStats(postId);
+  }
+
+  Future refreshPostStats(String postId) async {
     var refreshedPostStats = await _dataService.getPostStats(postId);
     if (refreshedPostStats != null) {
       var listIndex = postIndexes[postId];
       posts![listIndex!].stats = refreshedPostStats;
       notifyListeners();
+    }
+  }
+
+  @override
+  Future refreshDisplayedPostsStats() async {
+    if (_posts != null) {
+      for (var post in _posts!) {
+        refreshPostStats(post.id);
+      }
     }
   }
 
@@ -160,5 +173,11 @@ class IterablePostDisplayViewModel extends PostDisplayViewModel {
         posts![listIndex!].attaches.map((e) => e.attachLink).toList();
     Navigator.of(context).pushNamed(AppTabNavigatorRoutes.postDetailed,
         arguments: postAttachesLinks);
+  }
+
+  @override
+  Future syncPostStats(String postId) async {
+    await _syncService.syncPostStats(postId);
+    await refreshPostStats(postId);
   }
 }

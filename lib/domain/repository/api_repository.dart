@@ -42,4 +42,5 @@ abstract class ApiRepository {
   Future commentPost(String postId, String text);
   Future<SubscribeStatus?> followUser(String authorId);
   Future<SubscribeStatus?> undoFollowUser(String authorId);
+  Future<PostStats?> getPostStats(String postId);
 }

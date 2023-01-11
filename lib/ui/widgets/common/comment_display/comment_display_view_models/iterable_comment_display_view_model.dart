@@ -30,11 +30,13 @@ class IterableCommentDisplayViewModel extends CommentDisplayViewModel {
   List<CommentModel>? get comments => _comments;
   set comments(List<CommentModel>? val) {
     _comments = val;
-    notifyListeners();
+    if (_isRefreshing) {
+      notifyListeners();
+    }
   }
 
   bool _isRefreshing = true;
-  bool _isCommentsLoading = false;
+  bool _isCommentsLoading = true;
   bool get isCommentsLoading => _isCommentsLoading;
   set isCommentsLoading(bool val) {
     _isCommentsLoading = val;

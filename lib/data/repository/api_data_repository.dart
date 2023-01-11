@@ -122,4 +122,7 @@ class ApiDataRepository extends ApiRepository {
   @override
   Future<SubscribeStatus?> undoFollowUser(String authorId) =>
       _api.undoFollowUser(UndoFollowUserRequest(authorId: authorId));
+
+  @override
+  Future<PostStats?> getPostStats(String postId) => _api.getPostStats(postId);
 }
