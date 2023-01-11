@@ -36,7 +36,7 @@ class UserProfileViewModel extends UserPostDisplayViewModel {
   void getAuthorAvatar() async {
     if (user!.avatarLink != null) {
       var avatarFile = await DioCacheManager.instance
-          .getSingleFile("$AppConfig.baseUrl${user!.avatarLink}");
+          .getSingleFile("${AppConfig.baseUrl}${user!.avatarLink}");
       avatar = Image.file(avatarFile);
     }
   }

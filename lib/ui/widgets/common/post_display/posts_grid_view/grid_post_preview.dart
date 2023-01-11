@@ -27,7 +27,7 @@ class GridPostPreview<T extends PostDisplayViewModel> extends StatelessWidget {
           ),
           image: DecorationImage(
             image: CachedNetworkImageProvider(
-              "$AppConfig.baseUrl${post.attaches[0].attachLink}",
+              "${AppConfig.baseUrl}${post.attaches[0].attachLink}",
               cacheManager: DioCacheManager.instance,
             ),
             fit: BoxFit.cover,

@@ -105,7 +105,7 @@ class _Avatar<T extends CommentDisplayViewModel> extends StatelessWidget {
         child: CircleAvatar(
             backgroundImage: avatarLink != null
                 ? CachedNetworkImageProvider(
-                    "$AppConfig.baseUrl$avatarLink",
+                    "${AppConfig.baseUrl}$avatarLink",
                     cacheManager: DioCacheManager.instance,
                   )
                 : null),

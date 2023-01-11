@@ -24,7 +24,7 @@ class PostAttachInteractive extends StatelessWidget {
       },
       transformationController: viewModel.zoomControllers[pageIndex],
       child: CachedNetworkImage(
-        imageUrl: "$AppConfig.baseUrl$attachLink",
+        imageUrl: "${AppConfig.baseUrl}$attachLink",
         cacheManager: DioCacheManager.instance,
       ),
     );

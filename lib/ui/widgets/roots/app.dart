@@ -55,7 +55,7 @@ class AppViewModel extends ChangeNotifier {
   Future refreshAvatar() async {
     if (user!.avatarLink != null) {
       await DioCacheManager.instance.downloadFile(
-        "$AppConfig.baseUrl${user!.avatarLink}",
+        "${AppConfig.baseUrl}${user!.avatarLink}",
         key: avatarCacheKey,
         force: true,
       );

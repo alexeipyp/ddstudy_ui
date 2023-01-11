@@ -29,7 +29,7 @@ class PostAuthorPreview<T extends PostDisplayViewModel>
           CircleAvatar(
               backgroundImage: avatarLink != null
                   ? CachedNetworkImageProvider(
-                      "$AppConfig.baseUrl$avatarLink",
+                      "${AppConfig.baseUrl}$avatarLink",
                       cacheManager: DioCacheManager.instance,
                     )
                   : null),
