@@ -8,7 +8,19 @@ class CurrentUserProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const UserProfilePreview<CurrentUserProfileViewModel>();
+    var viewModel = context.watch<CurrentUserProfileViewModel>();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Профиль"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: viewModel.logout,
+          ),
+        ],
+      ),
+      body: const UserProfilePreview<CurrentUserProfileViewModel>(),
+    );
   }
 
   static create() {

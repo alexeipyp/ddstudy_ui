@@ -13,16 +13,22 @@ class HomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var viewModel = context.watch<HomeViewModel>();
 
-    return RefreshIndicator(
-      onRefresh: viewModel.refreshPosts,
-      child: viewModel.posts == null
-          ? const Center(child: CircularProgressIndicator())
-          : viewModel.posts!.isEmpty
-              ? const NoneContentWidget(
-                  contentType: ContentTypeEnum.subscribe,
-                )
-              : const PostListView<HomeViewModel>(),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Главная"),
+        ),
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: viewModel.refreshPosts,
+            child: viewModel.posts == null
+                ? const Center(child: CircularProgressIndicator())
+                : viewModel.posts!.isEmpty
+                    ? const NoneContentWidget(
+                        contentType: ContentTypeEnum.subscribe,
+                      )
+                    : const PostListView<HomeViewModel>(),
+          ),
+        ));
   }
 
   static create() {

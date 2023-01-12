@@ -53,6 +53,8 @@ dependencies:
   cached_network_image: ^3.2.3
   flutter_cache_manager: ^3.3.0
   flutter_cache_manager_dio: ^3.0.0
+  flutter_keyboard_visibility: ^5.4.0
+  google_fonts: ^3.0.1
 
 dev_dependencies:
   flutter_test:

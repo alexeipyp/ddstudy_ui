@@ -65,7 +65,7 @@ abstract class ApiClient {
       @Query("postId") String postId, @Query("take") int take,
       {@Query("upTo") String? upTo});
 
-  @POST('/api/Post/LikeComment')
+  @POST('/api/Like/LikeComment')
   Future<CommentStats?> likeComment(@Body() LikeCommentRequest request);
 
   @POST('/api/Post/CommentPost')

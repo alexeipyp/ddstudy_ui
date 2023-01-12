@@ -10,9 +10,14 @@ class UserProfileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var viewModel = context.watch<UserProfileViewModel>();
-    return viewModel.user != null && viewModel.userActivity != null
-        ? const UserProfilePreview<UserProfileViewModel>()
-        : const Center(child: CircularProgressIndicator());
+    return Scaffold(
+      appBar: AppBar(
+        title: viewModel.user != null ? Text(viewModel.user!.name) : null,
+      ),
+      body: viewModel.user != null && viewModel.userActivity != null
+          ? const UserProfilePreview<UserProfileViewModel>()
+          : const Center(child: CircularProgressIndicator()),
+    );
   }
 
   static create(Object? arg) {

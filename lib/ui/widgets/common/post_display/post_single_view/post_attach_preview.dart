@@ -14,13 +14,26 @@ class PostAttachPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      foregroundDecoration: BoxDecoration(
+        border: Border.symmetric(
+          horizontal: BorderSide(
+            width: 3,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
         image: DecorationImage(
           fit: BoxFit.cover,
           image: CachedNetworkImageProvider(
             "${AppConfig.baseUrl}$attachLink",
             cacheManager: DioCacheManager.instance,
           ),
+        ),
+      ),
+      child: const Center(
+        child: Icon(
+          Icons.photo_camera_outlined,
+          color: Colors.white,
+          size: 200,
         ),
       ),
     );

@@ -16,6 +16,9 @@ class CamWidget extends StatefulWidget {
 
 class CamWidgetState extends State<CamWidget> {
   CameraController? controller;
+  List<CameraDescription> cameras = <CameraDescription>[];
+  bool isFrontCamAvailable = false;
+  bool isMainCamChosen = true;
 
   @override
   void initState() {
@@ -24,13 +27,29 @@ class CamWidgetState extends State<CamWidget> {
   }
 
   asyncInit() async {
-    var cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.high);
+    cameras = await availableCameras();
+    if (cameras.length > 1) {
+      if (cameras[1].lensDirection == CameraLensDirection.front) {
+        isFrontCamAvailable = true;
+      }
+    }
+    await initCamera(cameras[0]);
+  }
+
+  Future initCamera(CameraDescription camera) async {
+    controller = CameraController(camera, ResolutionPreset.high);
     await controller!.initialize();
     if (!mounted) {
       return;
     }
     setState(() {});
+  }
+
+  void changeCamera() async {
+    initCamera(cameras[isMainCamChosen ? 1 : 0]);
+    setState(() {
+      isMainCamChosen = !isMainCamChosen;
+    });
   }
 
   @override
@@ -64,48 +83,56 @@ class CamWidgetState extends State<CamWidget> {
         scale = 1 / scale;
       }
 
-      return Stack(
-        children: [
-          Transform.scale(
-            scale: scale,
-            child: Center(
-              child: CameraPreview(
-                controller!,
+      return Scaffold(
+        body: Stack(
+          children: [
+            Transform.scale(
+              scale: scale,
+              child: Center(
+                child: CameraPreview(
+                  controller!,
+                ),
               ),
             ),
-          ),
-          Container(
-            alignment: Alignment.bottomCenter,
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 2,
+            Container(
+              alignment: Alignment.bottomCenter,
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                      color: Colors.grey[400]!.withAlpha(150),
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                    color: Colors.grey[400]!.withAlpha(150),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  width: 60,
-                  height: 60,
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.camera),
-                    color: Colors.white,
-                    iconSize: 54,
-                    onPressed: () async {
-                      var file = await controller!.takePicture();
-                      widget.onFile(File(file.path));
-                    },
-                  ),
-                )
-              ],
+                    width: 60,
+                    height: 60,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(Icons.camera),
+                      color: Colors.white,
+                      iconSize: 54,
+                      onPressed: () async {
+                        var file = await controller!.takePicture();
+                        widget.onFile(File(file.path));
+                      },
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        floatingActionButton: isFrontCamAvailable
+            ? FloatingActionButton(
+                onPressed: changeCamera,
+                child: const Icon(Icons.change_circle_outlined),
+              )
+            : const SizedBox.shrink(),
       );
     }));
   }

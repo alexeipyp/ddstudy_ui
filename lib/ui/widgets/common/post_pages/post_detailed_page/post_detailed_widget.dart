@@ -12,6 +12,7 @@ class PostDetailedWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var viewModel = context.watch<PostDetailedViewModel>();
     return Scaffold(
+      appBar: AppBar(),
       backgroundColor: Colors.black,
       body: Stack(children: [
         PageView.builder(

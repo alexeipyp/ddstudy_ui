@@ -24,7 +24,18 @@ class PostCommentsViewModel extends IterableCommentDisplayViewModel {
     if (commentTextTec.text.isNotEmpty) {
       _commentService.commentPost(postId, commentTextTec.text);
       commentTextTec.clear();
+      if (lvc.hasClients) {
+        lvc.animateTo(
+          lvc.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 50),
+          curve: Curves.linear,
+        );
+      }
       FocusScope.of(context).requestFocus(FocusNode());
     }
+  }
+
+  void scrollToEnd() {
+    lvc.jumpTo(lvc.position.maxScrollExtent);
   }
 }

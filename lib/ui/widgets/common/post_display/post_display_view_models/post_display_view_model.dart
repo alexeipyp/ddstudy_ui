@@ -1,12 +1,39 @@
+import 'package:ddstudy_ui/domain/enums/tab_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../domain/models/post/post_model.dart';
+import '../../../../../domain/models/user/user.dart';
 import '../../../../navigation/app_tab_navigator.dart';
+import '../../../roots/app.dart';
 
 abstract class PostDisplayViewModel extends ChangeNotifier {
   BuildContext context;
   PostDisplayViewModel({
     required this.context,
-  });
+  }) {
+    appModel = context.read<AppViewModel>();
+    if (appModel!.user == null) {
+      appModelListener() {
+        currentUser = appModel!.user;
+        if (currentUser != null) {
+          appModel!.removeListener(appModelListener);
+        }
+      }
+
+      appModel!.addListener(appModelListener);
+    } else {
+      currentUser = appModel!.user;
+    }
+  }
+
+  AppViewModel? appModel;
+
+  User? _currentUser;
+  User? get currentUser => _currentUser;
+  set currentUser(User? val) {
+    _currentUser = val;
+    notifyListeners();
+  }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -25,9 +52,23 @@ abstract class PostDisplayViewModel extends ChangeNotifier {
   void openPostInDetailedPage(String postId);
 
   void openAuthorProfilePage(String authorId) {
-    Navigator.of(context)
-        .pushNamed(AppTabNavigatorRoutes.authorProfile, arguments: authorId)
-        .then((_) => refreshDisplayedPostsStats());
+    if (currentUser != null) {
+      var currentUserId = appModel!.user!.id;
+      if (authorId == currentUserId) {
+        appModel!.selectTab(TabItemEnum.profile);
+      } else {
+        Navigator.of(context)
+            .pushNamed(AppTabNavigatorRoutes.authorProfile, arguments: authorId)
+            .then((_) => refreshDisplayedPostsStats());
+      }
+    }
+  }
+
+  Image? getCurrentUserAvatar() {
+    if (appModel != null) {
+      return appModel!.avatar;
+    }
+    return null;
   }
 
   void refreshDisplayedPostsStats();

@@ -20,7 +20,7 @@ class GridPostPreview<T extends PostDisplayViewModel> extends StatelessWidget {
     var post = viewModel.getPostById(postId);
     return GestureDetector(
       child: Container(
-        decoration: BoxDecoration(
+        foregroundDecoration: BoxDecoration(
           border: Border.all(
             color: Theme.of(context).primaryColor,
             width: 2,
@@ -31,6 +31,13 @@ class GridPostPreview<T extends PostDisplayViewModel> extends StatelessWidget {
               cacheManager: DioCacheManager.instance,
             ),
             fit: BoxFit.cover,
+          ),
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.photo_camera_outlined,
+            color: Colors.blueGrey,
+            size: 50,
           ),
         ),
       ),

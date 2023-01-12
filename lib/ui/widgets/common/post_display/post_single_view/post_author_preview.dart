@@ -28,14 +28,24 @@ class PostAuthorPreview<T extends PostDisplayViewModel>
         children: [
           CircleAvatar(
               backgroundImage: avatarLink != null
-                  ? CachedNetworkImageProvider(
-                      "${AppConfig.baseUrl}$avatarLink",
-                      cacheManager: DioCacheManager.instance,
-                    )
+                  ? viewModel.currentUser != null &&
+                          authorId == viewModel.currentUser!.id
+                      ? viewModel.getCurrentUserAvatar()!.image
+                      : CachedNetworkImageProvider(
+                          "${AppConfig.baseUrl}$avatarLink",
+                          cacheManager: DioCacheManager.instance,
+                        )
                   : null),
           Padding(
             padding: const EdgeInsets.only(left: 10),
-            child: Text(authorName),
+            child: Text(
+              authorName,
+              style:
+                  Theme.of(context).textTheme.headline6!.merge(const TextStyle(
+                        color: Colors.white,
+                        fontFamily: "Comic Sans",
+                      )),
+            ),
           ),
         ],
       ),

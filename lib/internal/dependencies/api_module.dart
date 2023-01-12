@@ -37,7 +37,7 @@ class ApiModule {
   }
 
   static Dio _addInterceptors(Dio dio) {
-    dio.interceptors.add(QueuedInterceptorsWrapper(
+    dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await TokenStorage.getAccessToken();
         options.headers.addAll({"Authorization": "Bearer $token"});
@@ -45,6 +45,7 @@ class ApiModule {
       },
       onError: (e, handler) async {
         if (e.response?.statusCode == 401) {
+          dio.lock();
           RequestOptions options = e.response!.requestOptions;
 
           var rt = await TokenStorage.getRefreshToken();
@@ -64,6 +65,8 @@ class ApiModule {
               requestOptions: options,
               statusCode: 400,
             ));
+          } finally {
+            dio.unlock();
           }
           return handler.resolve(await dio.fetch(options));
         } else {

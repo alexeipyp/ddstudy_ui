@@ -1,3 +1,4 @@
+import 'package:ddstudy_ui/data/services/sync_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager_dio/flutter_cache_manager_dio.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ import '../common/app_bottom_tabs.dart';
 
 class AppViewModel extends ChangeNotifier {
   BuildContext context;
-  final _authService = AuthService();
+  final _syncService = SyncService();
   AppViewModel({required this.context}) {
     asyncInit();
   }
@@ -52,7 +53,13 @@ class AppViewModel extends ChangeNotifier {
     await refreshAvatar();
   }
 
+  Future refreshCurrentUser() async {
+    await _syncService.syncCurrentUser();
+    user = await SharedPrefs.getStoredUser();
+  }
+
   Future refreshAvatar() async {
+    await refreshCurrentUser();
     if (user!.avatarLink != null) {
       await DioCacheManager.instance.downloadFile(
         "${AppConfig.baseUrl}${user!.avatarLink}",
@@ -65,10 +72,6 @@ class AppViewModel extends ChangeNotifier {
         avatar = Image.file(avatarFileInfo.file);
       }
     }
-  }
-
-  void logout() async {
-    await _authService.logout().then((value) => GlobalNavigator.toLoader());
   }
 }
 
@@ -97,15 +100,6 @@ class App extends StatelessWidget {
             return isFirstRouteInCurrentTab;
           },
           child: Scaffold(
-            appBar: AppBar(
-              title: const Text("Fluttergram.NET"),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.exit_to_app),
-                  onPressed: viewModel.logout,
-                ),
-              ],
-            ),
             bottomNavigationBar: AppBottomTabs(
               currentTab: viewModel.currentTab,
               onSelectTab: viewModel.selectTab,

@@ -58,6 +58,11 @@ class AuthService {
         retryPassword != null &&
         birthDate != null) {
       try {
+        birthDate = DateTime.utc(
+          birthDate.year,
+          birthDate.month,
+          birthDate.day,
+        );
         await _api.registerUser(
           name: name,
           email: email,

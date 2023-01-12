@@ -89,6 +89,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   void register() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     state = state.copyWith(
       isLoading: true,
     );

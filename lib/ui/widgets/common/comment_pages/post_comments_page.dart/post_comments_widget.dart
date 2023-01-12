@@ -1,5 +1,6 @@
 import 'package:ddstudy_ui/domain/enums/content_type.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
 import '../../comment_display/comment_list_view.dart';
@@ -15,21 +16,38 @@ class PostCommentsWidget extends StatelessWidget {
 
     return viewModel.comments == null || viewModel.isCommentsLoading
         ? const Center(child: CircularProgressIndicator())
-        : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Flexible(
-                child: viewModel.comments!.isNotEmpty
-                    ? const CommentListView<PostCommentsViewModel>()
-                    : const NoneContentWidget(
-                        contentType: ContentTypeEnum.comments,
-                      ),
+        : Scaffold(
+            appBar: AppBar(
+              title: Text("Комментарии"),
+            ),
+            body: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: viewModel.comments!.isNotEmpty
+                        ? const CommentListView<PostCommentsViewModel>()
+                        : const NoneContentWidget(
+                            contentType: ContentTypeEnum.comments,
+                          ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(5),
+                    child: CreateCommentWidget(),
+                  ),
+                ],
               ),
-              const Padding(
-                padding: EdgeInsets.all(5),
-                child: CreateCommentWidget(),
-              ),
-            ],
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.miniEndTop,
+            floatingActionButton: viewModel.lvc.hasClients
+                ? viewModel.lvc.offset == viewModel.lvc.position.maxScrollExtent
+                    ? const SizedBox.shrink()
+                    : FloatingActionButton.small(
+                        onPressed: viewModel.scrollToEnd,
+                        child: const Icon(Icons.arrow_downward),
+                      )
+                : const SizedBox.shrink(),
           );
   }
 
@@ -58,7 +76,7 @@ class CreateCommentWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: ElevatedButton(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             onPressed: viewModel.sendComment,

@@ -44,8 +44,6 @@ class IterableCommentDisplayViewModel extends CommentDisplayViewModel {
   }
 
   Map<String, int> commentIndexes = <String, int>{};
-
-  Timer? refresh;
   void asyncInit() async {
     await asyncCommentsLoading();
     while (_isRefreshing) {
@@ -128,12 +126,7 @@ class IterableCommentDisplayViewModel extends CommentDisplayViewModel {
     try {
       await syncComments(upToDate: upToDate);
       if (isCommentsLoading || _isRefreshing) {
-        if (upToDate != null) {
-          var newComments = await loadCommentsFromDB(upToDate: upToDate);
-          comments = <CommentModel>[...comments!, ...newComments];
-        } else {
-          comments = await loadCommentsFromDB();
-        }
+        comments = await loadCommentsFromDB();
         initCommentIndexes();
       }
     } on NoNetworkException {
@@ -147,7 +140,7 @@ class IterableCommentDisplayViewModel extends CommentDisplayViewModel {
       .syncComments(postId, commentsUploadAmountPerSync, upToDate: upToDate);
 
   Future<List<CommentModel>> loadCommentsFromDB({DateTime? upToDate}) async =>
-      await _dataService.getComments(postId, upToDate: upToDate);
+      await _dataService.getComments(postId);
 
   @override
   Future displayError(String errorText) async {

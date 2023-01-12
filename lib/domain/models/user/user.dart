@@ -50,4 +50,20 @@ class User implements DBModel {
         email.hashCode ^
         birthDate.hashCode;
   }
+
+  User copyWith({
+    String? id,
+    String? name,
+    String? avatarLink,
+    String? email,
+    DateTime? birthDate,
+  }) {
+    return User(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      avatarLink: avatarLink ?? this.avatarLink,
+      email: email ?? this.email,
+      birthDate: birthDate ?? this.birthDate,
+    );
+  }
 }

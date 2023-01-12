@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ddstudy_ui/domain/models/comment/comment_stats.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager_dio/flutter_cache_manager_dio.dart';
 import 'package:provider/provider.dart';
@@ -40,19 +41,27 @@ class _NotCurrentUserCommentPreview<T extends CommentDisplayViewModel>
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      _Avatar<T>(
-        avatarLink: comment.author.avatarLink,
-        authorId: comment.author.id,
-      ),
-      _CommentText<T>(
-        authorName: comment.author.name,
-        text: comment.text,
-        authorId: comment.author.id,
-        alignment: alignment,
-        textAlignment: textAlign,
-      ),
-    ]);
+    return Column(
+      children: [
+        Row(children: [
+          _Avatar<T>(
+            avatarLink: comment.author.avatarLink,
+            authorId: comment.author.id,
+          ),
+          _CommentText<T>(
+            authorName: comment.author.name,
+            text: comment.text,
+            authorId: comment.author.id,
+            alignment: alignment,
+            textAlignment: textAlign,
+          ),
+        ]),
+        CommentInfo<T>(
+          commentId: comment.id,
+          alignment: MainAxisAlignment.end,
+        ),
+      ],
+    );
   }
 }
 
@@ -68,19 +77,27 @@ class _CurrentUserCommentPreview<T extends CommentDisplayViewModel>
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      _CommentText<T>(
-        authorName: comment.author.name,
-        text: comment.text,
-        authorId: comment.author.id,
-        alignment: alignment,
-        textAlignment: textAlign,
-      ),
-      _Avatar<T>(
-        avatarLink: comment.author.avatarLink,
-        authorId: comment.author.id,
-      ),
-    ]);
+    return Column(
+      children: [
+        Row(children: [
+          _CommentText<T>(
+            authorName: comment.author.name,
+            text: comment.text,
+            authorId: comment.author.id,
+            alignment: alignment,
+            textAlignment: textAlign,
+          ),
+          _Avatar<T>(
+            avatarLink: comment.author.avatarLink,
+            authorId: comment.author.id,
+          ),
+        ]),
+        CommentInfo<T>(
+          commentId: comment.id,
+          alignment: MainAxisAlignment.start,
+        ),
+      ],
+    );
   }
 }
 
@@ -104,10 +121,13 @@ class _Avatar<T extends CommentDisplayViewModel> extends StatelessWidget {
         },
         child: CircleAvatar(
             backgroundImage: avatarLink != null
-                ? CachedNetworkImageProvider(
-                    "${AppConfig.baseUrl}$avatarLink",
-                    cacheManager: DioCacheManager.instance,
-                  )
+                ? viewModel.currentUserId != null &&
+                        authorId == viewModel.currentUserId
+                    ? viewModel.getCurrentUserAvatar()!.image
+                    : CachedNetworkImageProvider(
+                        "${AppConfig.baseUrl}$avatarLink",
+                        cacheManager: DioCacheManager.instance,
+                      )
                 : null),
       ),
     );
@@ -159,6 +179,44 @@ class _CommentText<T extends CommentDisplayViewModel> extends StatelessWidget {
               ],
             ),
           ]),
+    );
+  }
+}
+
+class CommentInfo<T extends CommentDisplayViewModel> extends StatelessWidget {
+  final String commentId;
+  final MainAxisAlignment alignment;
+  const CommentInfo({
+    Key? key,
+    required this.commentId,
+    required this.alignment,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    T viewModel = context.watch<T>();
+    var comment = viewModel.getCommentById(commentId);
+    return Row(
+      mainAxisAlignment: alignment,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        GestureDetector(
+          onTap: () {
+            viewModel.onLikeButtonPressed(comment.stats.id!);
+          },
+          child: Icon(
+            Icons.favorite,
+            color: comment.stats.whenLiked != null
+                ? Colors.red
+                : Theme.of(context).primaryColor,
+            size: 15,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 5),
+          child: Text("${comment.stats.likesAmount}"),
+        )
+      ],
     );
   }
 }

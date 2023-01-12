@@ -22,7 +22,7 @@ class PostPreview<T extends PostDisplayViewModel> extends StatelessWidget {
     var screenSize = MediaQuery.of(context).size;
     var post = viewModel.getPostById(postId);
     return Container(
-      color: Colors.blueGrey,
+      color: Color.fromARGB(255, 70, 130, 250),
       child: Column(
         children: [
           Padding(

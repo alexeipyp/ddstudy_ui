@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../../domain/enums/tab_item.dart';
 import '../../../../../domain/models/comment/comment_model.dart';
 import '../../../../../internal/config/shared_prefs.dart';
 import '../../../../navigation/app_tab_navigator.dart';
+import '../../../roots/app.dart';
 
 abstract class CommentDisplayViewModel extends ChangeNotifier {
   BuildContext context;
@@ -12,15 +15,12 @@ abstract class CommentDisplayViewModel extends ChangeNotifier {
     required this.context,
     required this.postId,
   }) {
+    appModel = context.read<AppViewModel>();
     loadCurrentUser();
   }
 
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
-  set isLoading(bool val) {
-    _isLoading = val;
-    notifyListeners();
-  }
+  bool isLoading = false;
+  AppViewModel? appModel;
 
   String? _errText;
   String? get errText => _errText;
@@ -30,8 +30,21 @@ abstract class CommentDisplayViewModel extends ChangeNotifier {
   }
 
   void openAuthorProfilePage(String authorId) {
-    Navigator.of(context)
-        .pushNamed(AppTabNavigatorRoutes.authorProfile, arguments: authorId);
+    if (currentUserId != null) {
+      if (authorId == currentUserId) {
+        appModel!.selectTab(TabItemEnum.profile);
+      } else {
+        Navigator.of(context).pushNamed(AppTabNavigatorRoutes.authorProfile,
+            arguments: authorId);
+      }
+    }
+  }
+
+  Image? getCurrentUserAvatar() {
+    if (appModel != null) {
+      return appModel!.avatar;
+    }
+    return null;
   }
 
   CommentModel getCommentById(String commentId);

@@ -67,6 +67,32 @@ class DB {
     return "t_$type";
   }
 
+  Future<Iterable<Map<String, dynamic>>> getAllWithIncludes<T>(
+    Map<JoinTableAndSelector, String> joinTablesWithSelectors, {
+    Map<String, Object?>? whereMap,
+    String? orderBy,
+  }) async {
+    String queryString = "SELECT * FROM ${_dbName(T)} ";
+    joinTablesWithSelectors.forEach((key, value) {
+      queryString +=
+          "INNER JOIN ${_dbName(key.joinTable)} ON ${_dbName(T)}.$value = ${_dbName(key.joinTable)}.${key.selector} ";
+    });
+    if (whereMap != null) {
+      queryString += "WHERE ";
+      var whereBuilder = <String>[];
+      whereMap.forEach((key, value) {
+        whereBuilder.add("$key = \"${value.toString()}\"");
+      });
+      queryString += whereBuilder.join(' AND ');
+    }
+    if (orderBy != null) {
+      queryString += " ORDER BY $orderBy";
+    }
+    Iterable<Map<String, dynamic>> query = await _db.rawQuery(queryString);
+
+    return query;
+  }
+
   Future<Iterable<T>> getAll<T extends DBModel>({
     Map<String, Object?>? whereMap,
     int? take,
@@ -203,6 +229,15 @@ class WhereNullCheckArg {
   NullCheckOperatorEnum nullCheckOper;
   WhereNullCheckArg({
     required this.nullCheckOper,
+  });
+}
+
+class JoinTableAndSelector {
+  Type joinTable;
+  String selector;
+  JoinTableAndSelector({
+    required this.joinTable,
+    required this.selector,
   });
 }
 

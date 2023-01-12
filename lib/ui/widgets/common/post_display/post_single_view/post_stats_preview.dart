@@ -26,7 +26,10 @@ class PostStatsPreview<T extends PostDisplayViewModel> extends StatelessWidget {
                 : Theme.of(context).primaryColor,
           ),
         ),
-        Text("${post.stats.likesAmount}"),
+        Text(
+          "${post.stats.likesAmount}",
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         IconButton(
           onPressed: () => viewModel.onCommentsButtonPressed(postId),
           icon: Icon(
@@ -34,7 +37,10 @@ class PostStatsPreview<T extends PostDisplayViewModel> extends StatelessWidget {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        Text("${post.stats.commentsAmount}"),
+        Text(
+          "${post.stats.commentsAmount}",
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

@@ -346,7 +346,7 @@ class _ApiClient implements ApiClient {
     )
             .compose(
               _dio.options,
-              '/api/Post/LikeComment',
+              '/api/Like/LikeComment',
               queryParameters: queryParameters,
               data: _data,
             )

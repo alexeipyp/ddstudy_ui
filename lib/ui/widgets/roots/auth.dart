@@ -62,6 +62,7 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   void login() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     state = state.copyWith(
       isLoading: true,
     );

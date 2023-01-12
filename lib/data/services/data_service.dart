@@ -70,6 +70,37 @@ class DataService {
     return res;
   }
 
+  Future<List<CommentModel>> getComments(String postId) async {
+    var res = <CommentModel>[];
+    Map<String, Object?>? whereMap = {"postId": postId};
+    var joinTablesWithSelectors = {
+      JoinTableAndSelector(joinTable: User, selector: "id"): "authorId",
+      JoinTableAndSelector(joinTable: CommentStats, selector: "id"): "id"
+    };
+    var query = await DB.instance.getAllWithIncludes<Comment>(
+      joinTablesWithSelectors,
+      whereMap: whereMap,
+      orderBy: "uploadDate ASC",
+    );
+
+    for (var entry in query) {
+      var author = User.fromMap(entry);
+      author = author.copyWith(id: entry["authorId"]);
+      var stats = CommentStats.fromMap(entry);
+      var comment = Comment.fromMap(entry);
+      res.add(CommentModel(
+        id: comment.id,
+        author: author,
+        text: comment.text,
+        uploadDate: comment.uploadDate,
+        stats: stats,
+      ));
+    }
+
+    return res;
+  }
+
+/*
   Future<List<CommentModel>> getComments(String postId,
       {DateTime? upToDate, int? take}) async {
     var res = <CommentModel>[];
@@ -103,6 +134,8 @@ class DataService {
     }
     return res;
   }
+
+  */
 
   Future<List<PostModel>> getFeed(FeedTypeEnum type, int take,
       {DateTime? upToDate, String? userId}) async {
@@ -171,7 +204,7 @@ class DataService {
     if (upToDate != null) {
       whereMap.addAll({
         "uploadDate": WhereCompareArg(
-          arg: upToDate.toString(),
+          arg: upToDate.toIso8601String(),
           compareOper: ComparisonOperatorEnum.less,
         )
       });
@@ -211,7 +244,7 @@ class DataService {
     if (upToDate != null) {
       whereMap.addAll({
         "whenLiked": WhereCompareArg(
-          arg: upToDate.toString(),
+          arg: upToDate.toIso8601String(),
           compareOper: ComparisonOperatorEnum.less,
         )
       });

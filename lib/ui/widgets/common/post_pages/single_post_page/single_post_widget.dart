@@ -11,6 +11,7 @@ class SinglePostWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var viewModel = context.watch<SinglePostViewModel>();
     return Scaffold(
+      appBar: AppBar(),
       body: viewModel.post == null
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

@@ -5,6 +5,7 @@ import 'package:ddstudy_ui/domain/models/post/post_searched.dart';
 import 'package:ddstudy_ui/domain/models/post/post_subscribed.dart';
 import 'package:ddstudy_ui/domain/models/user/subscribe_status.dart';
 import 'package:ddstudy_ui/domain/models/user/user_activity.dart';
+import 'package:ddstudy_ui/internal/config/shared_prefs.dart';
 import 'package:ddstudy_ui/internal/dependencies/repository_module.dart';
 import 'package:dio/dio.dart';
 
@@ -20,6 +21,13 @@ import '../../utils/exceptions.dart';
 class SyncService {
   final ApiRepository _api = RepositoryModule.apiRepository();
   final DataService _dataService = DataService();
+
+  Future syncCurrentUser() async {
+    var user = await _api.getUser();
+    if (user != null) {
+      await SharedPrefs.setStoredUser(user);
+    }
+  }
 
   Future syncUserActivity(String userId) async {
     var userActivityModel = await _api.getUserActivity(userId);

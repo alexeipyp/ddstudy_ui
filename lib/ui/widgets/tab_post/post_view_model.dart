@@ -11,6 +11,8 @@ class CreatePostViewModel extends ChangeNotifier {
     asyncInit();
   }
 
+  TextEditingController tec = TextEditingController();
+
   List<File> _postAttaches = <File>[];
   List<File> get postAttaches => _postAttaches;
   set postAttaches(List<File> val) {
@@ -62,6 +64,7 @@ class CreatePostViewModel extends ChangeNotifier {
       var attaches = await _api.uploadTemp(files: postAttaches);
       await _api.createPost(annotation!, attaches);
       postAttaches = <File>[];
+      tec.clear();
     }
 
     isLoading = false;

@@ -13,22 +13,27 @@ class FavoriteWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var viewModel = context.watch<FavoriteViewModel>();
 
-    return RefreshIndicator(
-      onRefresh: viewModel.refreshPosts,
-      child: Column(children: [
-        viewModel.errText != null
-            ? Text(viewModel.errText!)
-            : const SizedBox.shrink(),
-        Expanded(
-          child: viewModel.posts == null
-              ? const Center(child: CircularProgressIndicator())
-              : viewModel.posts!.isEmpty
-                  ? const NoneContentWidget(
-                      contentType: ContentTypeEnum.favorite,
-                    )
-                  : const PostGridView<FavoriteViewModel>(),
-        ),
-      ]),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Отметки \"Нравится\""),
+      ),
+      body: RefreshIndicator(
+        onRefresh: viewModel.refreshPosts,
+        child: Column(children: [
+          viewModel.errText != null
+              ? Text(viewModel.errText!)
+              : const SizedBox.shrink(),
+          Expanded(
+            child: viewModel.posts == null
+                ? const Center(child: CircularProgressIndicator())
+                : viewModel.posts!.isEmpty
+                    ? const NoneContentWidget(
+                        contentType: ContentTypeEnum.favorite,
+                      )
+                    : const PostGridView<FavoriteViewModel>(),
+          ),
+        ]),
+      ),
     );
   }
 

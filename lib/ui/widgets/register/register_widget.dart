@@ -48,7 +48,8 @@ class RegisterWidget extends StatelessWidget {
                   TextFormField(
                     controller: viewModel.birthDateTec,
                     keyboardType: TextInputType.datetime,
-                    decoration: const InputDecoration(hintText: "Enter date"),
+                    decoration:
+                        const InputDecoration(hintText: "Enter birth date"),
                   ),
                   ElevatedButton(
                     onPressed:
